@@ -15,6 +15,18 @@ namespace OvertakeSolver
                 Console.WriteLine($"OncomingSpeed = {overtake.OncomingSpeedMPS:F1} m/s");
                 Console.WriteLine($"Success = {overtake.Success}\n");
             }
+
+            Console.WriteLine(new Matrix(new double[][]
+            {
+                new double[] { 1, 2 },
+                new double[] { 3, 4 }
+            }) - new Matrix(new double[][]
+            {
+                new double[] { 4, 3 },
+                new double[] { 2, 1 }
+            }));
+
+            Console.WriteLine(Matrix.Identity(4));
         }
     }
 }
