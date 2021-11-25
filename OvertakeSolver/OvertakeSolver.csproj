@@ -9,4 +9,8 @@
     <ProjectReference Include="..\Overtake\Overtake.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="GUI\" />
+  </ItemGroup>
+
 </Project>
