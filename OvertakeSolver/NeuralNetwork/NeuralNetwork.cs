@@ -8,15 +8,22 @@ namespace OvertakeSolver
 {
     public class NeuralNetwork
     {
+        private int InputNodes;
+        private int OutputNodes;
+        private int HiddenNodes;
+        private double LearnRate;
 
         public NeuralNetwork(int inputNodes, int outputNodes, int hiddenNodes, double learnRate)
         {
-
+            this.InputNodes = inputNodes;
+            this.OutputNodes = outputNodes;
+            this.HiddenNodes = hiddenNodes;
+            this.LearnRate = learnRate;
         }
 
-        public double Normalise(int input)
+        public double DeNormaliseOutput(double input)
         {
-            return 0;
+            return input > 0.5 ? 0.99 : 0.01;
         }
 
         public void Train(double initialSeparation, double overtakingSpeedMPS, double oncomingSpeedMPS, bool canOvertake)

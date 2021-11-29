@@ -19,5 +19,10 @@ namespace OvertakeSolver
 
             return result;
         }
+
+        public static double Normalise(int input, int max)
+        {
+            return input / max;
+        }
     }
 }
