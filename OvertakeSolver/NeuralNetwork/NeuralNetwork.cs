@@ -29,6 +29,11 @@ namespace OvertakeSolver
         {
             Matrix inputsMatrix = Matrix.Convert(inputs);
             Matrix targetedOutputsMatrix = Matrix.Convert(targetedOutputs);
+
+            Matrix hiddenLayerOutputs = Matrix.Sigmoid(WeightsBetweenInputAndHidden * inputsMatrix);
+            Matrix outputLayerOutputs = Matrix.Sigmoid(WeightsBetweenHiddenAndOutput * hiddenLayerOutputs);
+
+            Matrix errors = targetedOutputsMatrix - outputLayerOutputs;
         }
 
         public double[] Query(double[] inputs)
