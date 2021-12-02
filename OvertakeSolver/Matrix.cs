@@ -12,6 +12,13 @@ namespace OvertakeSolver
 
         public Matrix(double[][] matrix)
         {
+            int length = matrix[0].Length;
+
+            foreach (double[] matrixComp in matrix)
+            {
+                if (matrixComp.Length != length) throw new ArgumentException("Matrix is not a square!");
+            }
+
             this.MatrixArr = matrix;
         }
 
@@ -33,6 +40,19 @@ namespace OvertakeSolver
         public Matrix Negative()
         {
             return this * -1;
+        }
+
+        public Matrix Initialise(Func<double> initFunc)
+        {
+            for (int i = 0; i < this.MatrixArr.Length; i++)
+            {
+                for (int j = 0; j < this.MatrixArr[0].Length; j++)
+                {
+                    this.MatrixArr[i][j] = initFunc();
+                }
+            }
+
+            return this;
         }
 
         public static Matrix Identity(int size)
@@ -125,6 +145,27 @@ namespace OvertakeSolver
             {
                 throw new ArgumentException("Matrices provided are not compatible sizes");
             }
+        }
+
+        public static Matrix Sigmoid(Matrix matrix)
+        {
+            Matrix newMatrix = new Matrix(Util.InstantiateJagged(matrix.MatrixArr.Length, matrix.MatrixArr[0].Length));
+
+            for (int i = 0; i < matrix.MatrixArr.Length; i++)
+            {
+                for (int j = 0; j < matrix.MatrixArr[0].Length; j++)
+                {
+                    newMatrix.MatrixArr[i][j] = Util.Sigmoid(matrix.MatrixArr[i][j]);
+                }
+            }
+
+            return newMatrix;
+        }
+
+        public static double[] Flatten(Matrix matrix)
+        {
+            //.Select gets all of the values and puts them into an array, SelectMany flattens them into one array.
+            return matrix.MatrixArr.SelectMany(arr => arr.Select(val => val)).ToArray();
         }
 
         public override string ToString()

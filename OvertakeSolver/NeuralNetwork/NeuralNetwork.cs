@@ -12,6 +12,8 @@ namespace OvertakeSolver
         private int OutputNodes;
         private int HiddenNodes;
         private double LearnRate;
+        private Matrix WeightsBetweenInputAndHidden;
+        private Matrix WeightsBetweenHiddenAndOutput;
 
         public NeuralNetwork(int inputNodes, int outputNodes, int hiddenNodes, double learnRate)
         {
@@ -19,6 +21,8 @@ namespace OvertakeSolver
             this.OutputNodes = outputNodes;
             this.HiddenNodes = hiddenNodes;
             this.LearnRate = learnRate;
+            this.WeightsBetweenInputAndHidden = new Matrix(Util.InstantiateJagged(hiddenNodes, inputNodes));
+            this.WeightsBetweenHiddenAndOutput = new Matrix(Util.InstantiateJagged(outputNodes, hiddenNodes));
         }
 
         public double DeNormaliseOutput(double input)
@@ -26,14 +30,18 @@ namespace OvertakeSolver
             return input > 0.5 ? 0.99 : 0.01;
         }
 
-        public void Train(double initialSeparation, double overtakingSpeedMPS, double oncomingSpeedMPS, bool canOvertake)
+        public void Train(double[] inputs, double[] targetedOutputs)
         {
 
         }
 
-        public static double Sigmoid(double input)
+        public double[] Query(double initialSeparation, double overtakingSpeedMPS, double oncomingSpeedMPS)
         {
-            return 1 / (1 + Math.Pow(Math.E, -input));
+            double[] inputs = new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS };
+
+            //outputs of a layer equals the weights times the input. do this for all layers and get the sigmoid of it.
+            Matrix outputs = Matrix.Sigmoid(this.WeightsBetweenHiddenAndOutput * Matrix.Sigmoid(this.WeightsBetweenInputAndHidden * new Matrix(new double[][] { inputs })));
+            return Matrix.Flatten(outputs);
         }
     }
 }

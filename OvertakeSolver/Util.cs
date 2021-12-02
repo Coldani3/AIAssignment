@@ -20,9 +20,19 @@ namespace OvertakeSolver
             return result;
         }
 
-        public static double Normalise(int input, int max)
+        public static double Normalise(double input, double max)
         {
             return input / max;
+        }
+
+        public static double Normalise(bool input)
+        {
+            return input ? 0.99 : 0.01;
+        }
+
+        public static double Sigmoid(double input)
+        {
+            return 1 / (1 + Math.Pow(Math.E, -input));
         }
     }
 }
