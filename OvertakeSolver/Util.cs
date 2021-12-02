@@ -25,9 +25,26 @@ namespace OvertakeSolver
             return input / max;
         }
 
+        public static double[] NormaliseArray(double[] array, params double[] maxes)
+        {
+            double[] newArray = new double[array.Length];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                newArray[i] = Normalise(array[i], maxes[i]);
+            }
+
+            return newArray;
+        }
+
         public static double Normalise(bool input)
         {
             return input ? 0.99 : 0.01;
+        }
+
+        public static double NormaliseOutput(double input)
+        {
+            return input > 0.5 ? 0.99 : 0.01;
         }
 
         public static double Sigmoid(double input)

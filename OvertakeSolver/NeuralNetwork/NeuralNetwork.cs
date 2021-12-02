@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OvertakeSolver
 {
-    public class NeuralNetwork
+    public class NeuralNetwork : ArtificialIntelligence
     {
         private int InputNodes;
         private int OutputNodes;
@@ -25,22 +25,18 @@ namespace OvertakeSolver
             this.WeightsBetweenHiddenAndOutput = new Matrix(Util.InstantiateJagged(outputNodes, hiddenNodes));
         }
 
-        public double DeNormaliseOutput(double input)
-        {
-            return input > 0.5 ? 0.99 : 0.01;
-        }
-
         public void Train(double[] inputs, double[] targetedOutputs)
         {
-
+            Matrix inputsMatrix = Matrix.Convert(inputs);
+            Matrix targetedOutputsMatrix = Matrix.Convert(targetedOutputs);
         }
 
-        public double[] Query(double initialSeparation, double overtakingSpeedMPS, double oncomingSpeedMPS)
+        public double[] Query(double[] inputs)
         {
-            double[] inputs = new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS };
+            //double[] inputs = new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS };
 
-            //outputs of a layer equals the weights times the input. do this for all layers and get the sigmoid of it.
-            Matrix outputs = Matrix.Sigmoid(this.WeightsBetweenHiddenAndOutput * Matrix.Sigmoid(this.WeightsBetweenInputAndHidden * new Matrix(new double[][] { inputs })));
+            //outputs of a layer equals the sigmoid of the weights times the input. do this for all layers
+            Matrix outputs = Matrix.Sigmoid(this.WeightsBetweenHiddenAndOutput * Matrix.Sigmoid(this.WeightsBetweenInputAndHidden * Matrix.Convert(inputs))));
             return Matrix.Flatten(outputs);
         }
     }

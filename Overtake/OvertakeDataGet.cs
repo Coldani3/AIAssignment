@@ -13,5 +13,10 @@ namespace Overtake
             Blackbox.Overtake next = Blackbox.Overtake.GetNextOvertake();
             return new OvertakeObj(next.InitialSeparationM, next.OvertakingSpeedMPS, next.OncomingSpeedMPS, next.Success);
         }
+
+        public static void SetRandomRepeatable(bool repeatable = true)
+        {
+            Blackbox.Overtake.SetRandomAsRepeatable(repeatable);
+        }
     }
 }

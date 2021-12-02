@@ -55,6 +55,11 @@ namespace OvertakeSolver
             return this;
         }
 
+        public static Matrix Convert(double[] array)
+        {
+            return new Matrix(new double[][] { array });
+        }
+
         public static Matrix Identity(int size)
         {
             double[][] identity = Util.InstantiateJagged(size, size);
@@ -174,12 +179,14 @@ namespace OvertakeSolver
 
             for (int i = 0; i < this.MatrixArr.Length; i++)
             {
+                output += "[";
+
                 for (int j = 0; j < this.MatrixArr[0].Length; j++)
                 {
                     output += this.MatrixArr[i][j] + ", ";
                 }
 
-                output += "\n";
+                output += "]\n";
             }
 
             return output;

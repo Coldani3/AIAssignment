@@ -21,9 +21,9 @@ namespace Overtake
             this.OncomingSpeedMPS = oncomingSpeedMPS;
         }
 
-        public static void SetRandomAsRepeatable(bool repeatable = true)
+        public static new void SetRandomAsRepeatable(bool repeatable = true)
         {
-            SetRandomAsRepeatable(repeatable);
+            Blackbox.Overtake.SetRandomAsRepeatable(repeatable);
         }
     }
 }
