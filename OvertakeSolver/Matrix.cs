@@ -95,31 +95,64 @@ namespace OvertakeSolver
             return a;
         }
 
+        //matrix multiplication is not commutative
+        public static Matrix operator *(double a, Matrix b)
+        {
+            double[][] newMatrix = Util.InstantiateJagged(b.MatrixArr.Length, b.MatrixArr[0].Length);
+
+            for (int i = 0; i < b.MatrixArr.Length; i++)
+            {
+                for (int j = 0; j < b.MatrixArr[i].Length; j++)
+                {
+                    newMatrix[i][j] = b.MatrixArr[i][j] * a;
+                }
+            }
+
+            return new Matrix(newMatrix);
+        }
+
         public static Matrix operator +(Matrix a, Matrix b)
         {
+            Matrix result = new Matrix(Util.InstantiateJagged(a.MatrixArr.Length, b.MatrixArr[0].Length));
+
             for (int i = 0; i < a.MatrixArr.Length; i++)
             {
                 for (int j = 0; j < a.MatrixArr[i].Length; j++)
                 {
-                    a.MatrixArr[i][j] += b.MatrixArr[i][j];
+                    result.MatrixArr[i][j] = a.MatrixArr[i][j] + b.MatrixArr[i][j];
                 }
             }
 
-            return a;
+            return result;
         }
 
         public static Matrix operator -(Matrix a, Matrix b)
         {
             //could just do a + (b * -1) but that's more performance intensive
+            Matrix result = new Matrix(Util.InstantiateJagged(a.MatrixArr.Length, b.MatrixArr[0].Length));
+
             for (int i = 0; i < a.MatrixArr.Length; i++)
             {
                 for (int j = 0; j < a.MatrixArr[i].Length; j++)
                 {
-                    a.MatrixArr[i][j] -= b.MatrixArr[i][j];
+                    result.MatrixArr[i][j] = a.MatrixArr[i][j] - b.MatrixArr[i][j];
                 }
             }
 
-            return a;
+            return result;
+        }
+
+        public static Matrix operator -(double a, Matrix b)
+        {
+            for (int i = 0; i < b.MatrixArr.Length; i++)
+            {
+                for (int j = 0; j < b.MatrixArr[i].Length; j++)
+                {
+                    b.MatrixArr[i][j] = a - b.MatrixArr[i][j];
+                }
+            }
+
+            return b;
         }
 
         public static Matrix operator *(Matrix a, Matrix b)

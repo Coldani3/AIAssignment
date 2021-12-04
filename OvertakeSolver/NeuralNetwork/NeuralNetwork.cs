@@ -23,6 +23,17 @@ namespace OvertakeSolver
             this.LearnRate = learnRate;
             this.WeightsBetweenInputAndHidden = new Matrix(Util.InstantiateJagged(hiddenNodes, inputNodes));
             this.WeightsBetweenHiddenAndOutput = new Matrix(Util.InstantiateJagged(outputNodes, hiddenNodes));
+
+            this.RandomiseWeights();
+        }
+
+        public void RandomiseWeights()
+        {
+            Random random = new Random();
+
+            Func<double> randomiseWeights = () => { return random.NextDouble() - 0.5; };
+            this.WeightsBetweenInputAndHidden.Initialise(randomiseWeights);
+            this.WeightsBetweenHiddenAndOutput.Initialise(randomiseWeights);
         }
 
         public void Train(double[] inputs, double[] targetedOutputs)
@@ -34,6 +45,13 @@ namespace OvertakeSolver
             Matrix outputLayerOutputs = Matrix.Sigmoid(WeightsBetweenHiddenAndOutput * hiddenLayerOutputs);
 
             Matrix errors = targetedOutputsMatrix - outputLayerOutputs;
+
+            this.WeightsBetweenHiddenAndOutput += this.LearnRate * errors * outputLayerOutputs * (1.0 - outputLayerOutputs) * hiddenLayerOutputs.Transpose();
+
+            Matrix hiddenErrors = this.WeightsBetweenHiddenAndOutput.Transpose() * errors;
+
+            this.WeightsBetweenInputAndHidden += this.LearnRate * hiddenErrors * hiddenLayerOutputs * (1.0 - hiddenLayerOutputs) * inputsMatrix.Transpose();
+
         }
 
         public double[] Query(double[] inputs)

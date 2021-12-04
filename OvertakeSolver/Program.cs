@@ -13,19 +13,6 @@ namespace OvertakeSolver
         static void Main(string[] args)
         {
             Overtake.OvertakeDataGet.SetRandomRepeatable();
-            List<Overtake.OvertakeObj> comparisonData = Util.GetDataForComparing(100);
-
-            //GetDataForComparing(20).ForEach((overtake) =>
-            //{
-            //    Console.WriteLine($"InitialSeparation = {overtake.InitialSeparationM:F1} metres");
-            //    Console.WriteLine($"OvertakingSpeed = {overtake.OvertakingSpeedMPS:F1} m/s");
-            //    Console.WriteLine($"OncomingSpeed = {overtake.OncomingSpeedMPS:F1} m/s");
-            //    Console.WriteLine($"Success = {overtake.Success}\n");
-            //});
-
-            //Console.ReadKey(true);
-
-            //Environment.Exit(0);
 
             Console.Write("Select AI to use:\n\n1. Neural Network\n2. Genetic Algorithm\n\n");
             char[] options = new char[] { '1', '2' };
@@ -53,6 +40,14 @@ namespace OvertakeSolver
                     throw new Exception("Impossible state reached");
             }
 
+            //GetDataForComparing(20).ForEach((overtake) =>
+            //{
+            //    Console.WriteLine($"InitialSeparation = {overtake.InitialSeparationM:F1} metres");
+            //    Console.WriteLine($"OvertakingSpeed = {overtake.OvertakingSpeedMPS:F1} m/s");
+            //    Console.WriteLine($"OncomingSpeed = {overtake.OncomingSpeedMPS:F1} m/s");
+            //    Console.WriteLine($"Success = {overtake.Success}\n");
+            //});
+
             long trainingStart = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
             trainer.BeginTraining();
@@ -60,6 +55,13 @@ namespace OvertakeSolver
             long trainingDone = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
             long trainingTime = trainingDone - trainingStart;
 
+            Console.WriteLine("Training complete in " + trainingTime + " milliseconds (" + GetTimeTakenFormatted(trainingTime) + ")");
+
+            trainer.ValidateSuccessRates();
+        }
+
+        public static string GetTimeTakenFormatted(long trainingTime)
+        {
             //Adapted from https://stackoverflow.com/a/9994060
             TimeSpan time = TimeSpan.FromMilliseconds(trainingTime);
             List<string> timeTaken = new List<string>(string.Format("{0:D2}h:{1:D2}m:{2:D2}s:{3:D3}ms",
@@ -68,7 +70,7 @@ namespace OvertakeSolver
                                     time.Seconds,
                                     time.Milliseconds).Split(':'));
 
-            foreach (int unit in new int[] {time.Hours, time.Minutes, time.Seconds})
+            foreach (int unit in new int[] { time.Hours, time.Minutes, time.Seconds })
             {
                 if (unit < 1)
                 {
@@ -80,21 +82,7 @@ namespace OvertakeSolver
                 }
             }
 
-            string formattedTimeTaken = String.Join(':', timeTaken);
-
-            Console.WriteLine("Training complete in " + trainingTime + " milliseconds (" + formattedTimeTaken + ")");
-
-            trainer.ValidateSuccessRates();
-
-
-
-            //GetDataForComparing(20).ForEach((overtake) =>
-            //{
-            //    Console.WriteLine($"InitialSeparation = {overtake.InitialSeparationM:F1} metres");
-            //    Console.WriteLine($"OvertakingSpeed = {overtake.OvertakingSpeedMPS:F1} m/s");
-            //    Console.WriteLine($"OncomingSpeed = {overtake.OncomingSpeedMPS:F1} m/s");
-            //    Console.WriteLine($"Success = {overtake.Success}\n");
-            //});
+            return String.Join(':', timeTaken);
         }
     }
 }
