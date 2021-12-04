@@ -12,12 +12,12 @@ namespace OvertakeSolver
 
         public Matrix(double[][] matrix)
         {
-            int length = matrix[0].Length;
+            //int length = matrix[0].Length;
 
-            foreach (double[] matrixComp in matrix)
-            {
-                if (matrixComp.Length != length) throw new ArgumentException("Matrix is not a square!");
-            }
+            //foreach (double[] matrixComp in matrix)
+            //{
+            //    if (matrixComp.Length != length) throw new ArgumentException("Matrix is not a square!");
+            //}
 
             this.MatrixArr = matrix;
         }

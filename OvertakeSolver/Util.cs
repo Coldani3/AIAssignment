@@ -51,5 +51,17 @@ namespace OvertakeSolver
         {
             return 1 / (1 + Math.Pow(Math.E, -input));
         }
+
+        public static List<Overtake.OvertakeObj> GetDataForComparing(int size)
+        {
+            List<Overtake.OvertakeObj> data = new List<Overtake.OvertakeObj>();
+
+            for (int i = 0; i < size; i++)
+            {
+                data.Add(Overtake.OvertakeDataGet.NextOvertake());
+            }
+
+            return data;
+        }
     }
 }

@@ -8,28 +8,30 @@ namespace OvertakeSolver
         static int HiddenNodes = 2;
         static int AIs = 20;
         static int TrainingSetSize = 500;
+        static int ComparisonSetSize = 100;
 
         static void Main(string[] args)
         {
             Overtake.OvertakeDataGet.SetRandomRepeatable();
-            List<Overtake.OvertakeObj> comparisonData = GetDataForComparing(100);
+            List<Overtake.OvertakeObj> comparisonData = Util.GetDataForComparing(100);
 
-            GetDataForComparing(20).ForEach((overtake) =>
-            {
-                Console.WriteLine($"InitialSeparation = {overtake.InitialSeparationM:F1} metres");
-                Console.WriteLine($"OvertakingSpeed = {overtake.OvertakingSpeedMPS:F1} m/s");
-                Console.WriteLine($"OncomingSpeed = {overtake.OncomingSpeedMPS:F1} m/s");
-                Console.WriteLine($"Success = {overtake.Success}\n");
-            });
+            //GetDataForComparing(20).ForEach((overtake) =>
+            //{
+            //    Console.WriteLine($"InitialSeparation = {overtake.InitialSeparationM:F1} metres");
+            //    Console.WriteLine($"OvertakingSpeed = {overtake.OvertakingSpeedMPS:F1} m/s");
+            //    Console.WriteLine($"OncomingSpeed = {overtake.OncomingSpeedMPS:F1} m/s");
+            //    Console.WriteLine($"Success = {overtake.Success}\n");
+            //});
 
-            Console.ReadKey(true);
+            //Console.ReadKey(true);
 
-            Environment.Exit(0);
+            //Environment.Exit(0);
 
             Console.Write("Select AI to use:\n\n1. Neural Network\n2. Genetic Algorithm\n\n");
             char[] options = new char[] { '1', '2' };
             char input = Console.ReadKey(true).KeyChar;
             List<ArtificialIntelligence> ais = new List<ArtificialIntelligence>();
+            AITrainer trainer;
 
             while (Array.IndexOf(options, input) == -1) input = Console.ReadKey(true).KeyChar;
 
@@ -39,89 +41,60 @@ namespace OvertakeSolver
                     //3 inputs: initial separation, overtaking speed and oncoming speed
                     //1 output: if you can overtake
                     for (int i = 0; i < AIs; i++) ais.Add(new NeuralNetwork(3, 1, HiddenNodes, 0.5));
+                    trainer = new NeuralNetworkTrainer(ais, TrainingSetSize, ComparisonSetSize);
                     break;
 
                 case '2':
 
+                    trainer = new GeneticAlgorithmTrainer(ais, TrainingSetSize, ComparisonSetSize);
                     break;
+
+                default:
+                    throw new Exception("Impossible state reached");
             }
 
-            //train the AIs
-            Overtake.OvertakeObj data;
+            long trainingStart = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-            for (int i = 0; i < TrainingSetSize; i++)
+            trainer.BeginTraining();
+
+            long trainingDone = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+            long trainingTime = trainingDone - trainingStart;
+
+            //Adapted from https://stackoverflow.com/a/9994060
+            TimeSpan time = TimeSpan.FromMilliseconds(trainingTime);
+            List<string> timeTaken = new List<string>(string.Format("{0:D2}h:{1:D2}m:{2:D2}s:{3:D3}ms",
+                                    time.Hours,
+                                    time.Minutes,
+                                    time.Seconds,
+                                    time.Milliseconds).Split(':'));
+
+            foreach (int unit in new int[] {time.Hours, time.Minutes, time.Seconds})
             {
-                foreach (ArtificialIntelligence intelligence in ais)
+                if (unit < 1)
                 {
-                    data = Overtake.OvertakeDataGet.NextOvertake();
-                    ArtificialIntelligenceTrain(intelligence, data.InitialSeparationM, data.OvertakingSpeedMPS, data.OncomingSpeedMPS, data.Success);
+                    timeTaken.RemoveAt(0);
+                }
+                else
+                {
+                    break;
                 }
             }
 
-            Dictionary<ArtificialIntelligence, int> AISuccessfulPredictions = new Dictionary<ArtificialIntelligence, int>();
+            string formattedTimeTaken = String.Join(':', timeTaken);
 
-            //get success rates of AIs.
+            Console.WriteLine("Training complete in " + trainingTime + " milliseconds (" + formattedTimeTaken + ")");
 
-            foreach (ArtificialIntelligence intelligence in ais)
-            {
-                Console.WriteLine("----Intelligence #" + ais.IndexOf(intelligence) + "----");
-                foreach (Overtake.OvertakeObj comparisonDataObj in comparisonData)
-                {
-                    bool output = ArtificialIntelligenceQuery(intelligence, comparisonDataObj.InitialSeparationM, comparisonDataObj.OvertakingSpeedMPS, comparisonDataObj.OncomingSpeedMPS);
-                    Console.WriteLine($"Initial Separation: {comparisonDataObj.InitialSeparationM}, Overtaking Speed (MPS): {comparisonDataObj.OvertakingSpeedMPS}, Oncoming Speed (MPS): {comparisonDataObj.OncomingSpeedMPS}, Predicted: {(output ? "True" : "False")}");
-
-                    if (output != comparisonDataObj.Success)
-                    {
-                        Console.Write("    X Incorrect");
-                    }
-                    else
-                    {
-                        AISuccessfulPredictions[intelligence]++;
-                    }
-                    
-                }
-            }
-
-            Console.WriteLine(new String('-', 30));
-
-            foreach (ArtificialIntelligence intelligence in AISuccessfulPredictions.Keys)
-            {
-                double success = (AISuccessfulPredictions[intelligence] / comparisonData.Count) * 100;
-                Console.WriteLine($"Intelligence #{ais.IndexOf(intelligence)} Success Rate: {success}%");
-            }
+            trainer.ValidateSuccessRates();
 
 
 
-            GetDataForComparing(20).ForEach((overtake) =>
-            {
-                Console.WriteLine($"InitialSeparation = {overtake.InitialSeparationM:F1} metres");
-                Console.WriteLine($"OvertakingSpeed = {overtake.OvertakingSpeedMPS:F1} m/s");
-                Console.WriteLine($"OncomingSpeed = {overtake.OncomingSpeedMPS:F1} m/s");
-                Console.WriteLine($"Success = {overtake.Success}\n");
-            });
-        }
-
-        public static void ArtificialIntelligenceTrain(ArtificialIntelligence network, double initialSeparation, double overtakingSpeedMPS, double oncomingSpeedMPS, bool canOvertake)
-        {
-            network.Train(Util.NormaliseArray(new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS }, 300, 40, 40), new double[] { Util.Normalise(canOvertake) });
-        }
-
-        public static bool ArtificialIntelligenceQuery(ArtificialIntelligence network, double initialSeparation, double overtakingSpeedMPS, double oncomingSpeedMPS)
-        {
-            return Util.NormaliseOutput(network.Query(Util.NormaliseArray(new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS }, 300, 40, 40))[0]) == 0.99;
-        }
-
-        public static List<Overtake.OvertakeObj> GetDataForComparing(int size)
-        {
-            List<Overtake.OvertakeObj> data = new List<Overtake.OvertakeObj>();
-
-            for (int i = 0; i < size; i++)
-            {
-                data.Add(Overtake.OvertakeDataGet.NextOvertake());
-            }
-
-            return data;
-
+            //GetDataForComparing(20).ForEach((overtake) =>
+            //{
+            //    Console.WriteLine($"InitialSeparation = {overtake.InitialSeparationM:F1} metres");
+            //    Console.WriteLine($"OvertakingSpeed = {overtake.OvertakingSpeedMPS:F1} m/s");
+            //    Console.WriteLine($"OncomingSpeed = {overtake.OncomingSpeedMPS:F1} m/s");
+            //    Console.WriteLine($"Success = {overtake.Success}\n");
+            //});
         }
     }
 }
