@@ -6,11 +6,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="ConsoleMenuLibrary.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Overtake\Overtake.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="GUI\" />
+    <Reference Include="ConsoleMenuLibrary">
+      <HintPath>ConsoleMenuLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="ConsoleMenuLibrary.dll" />
   </ItemGroup>
 
 </Project>

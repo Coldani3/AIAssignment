@@ -59,8 +59,13 @@ namespace OvertakeSolver
             //double[] inputs = new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS };
 
             //outputs of a layer equals the sigmoid of the weights times the input. do this for all layers
-            Matrix outputs = Matrix.Sigmoid(this.WeightsBetweenHiddenAndOutput * Matrix.Sigmoid(this.WeightsBetweenInputAndHidden * Matrix.Convert(inputs))));
+            Matrix outputs = Matrix.Sigmoid(this.WeightsBetweenHiddenAndOutput * Matrix.Sigmoid(this.WeightsBetweenInputAndHidden * Matrix.Convert(inputs)));
             return Matrix.Flatten(outputs);
+        }
+
+        public override string ToString()
+        {
+            return $"<{String.Join(',', this.InputNodes, this.OutputNodes, this.HiddenNodes, this.LearnRate)}>\n{this.WeightsBetweenInputAndHidden}\n{this.WeightsBetweenHiddenAndOutput}";
         }
     }
 }

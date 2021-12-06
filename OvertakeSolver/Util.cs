@@ -63,5 +63,30 @@ namespace OvertakeSolver
 
             return data;
         }
+
+        public static string GetTimeTakenFormatted(long trainingTime)
+        {
+            //Adapted from https://stackoverflow.com/a/9994060
+            TimeSpan time = TimeSpan.FromMilliseconds(trainingTime);
+            List<string> timeTaken = new List<string>(string.Format("{0:D2}h:{1:D2}m:{2:D2}s:{3:D3}ms",
+                                    time.Hours,
+                                    time.Minutes,
+                                    time.Seconds,
+                                    time.Milliseconds).Split(':'));
+
+            foreach (int unit in new int[] { time.Hours, time.Minutes, time.Seconds })
+            {
+                if (unit < 1)
+                {
+                    timeTaken.RemoveAt(0);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return String.Join(':', timeTaken);
+        }
     }
 }

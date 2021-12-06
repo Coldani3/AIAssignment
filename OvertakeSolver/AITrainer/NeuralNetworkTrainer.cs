@@ -18,8 +18,13 @@ namespace OvertakeSolver
             //train the AIs
             Overtake.OvertakeObj data;
 
+            Console.Clear();
+            Console.WriteLine("Epoch: ");
+
             for (int i = 0; i < TrainingSetSize; i++)
             {
+                Console.SetCursorPosition(7, 0);
+                Console.Write(i + "      ");
                 foreach (ArtificialIntelligence intelligence in AIsTraining)
                 {
                     data = Overtake.OvertakeDataGet.NextOvertake();
