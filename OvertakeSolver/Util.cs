@@ -47,11 +47,6 @@ namespace OvertakeSolver
             return input > 0.5 ? 0.99 : 0.01;
         }
 
-        public static double Sigmoid(double input)
-        {
-            return 1 / (1 + Math.Pow(Math.E, -input));
-        }
-
         public static List<Overtake.OvertakeObj> GetDataForComparing(int size)
         {
             List<Overtake.OvertakeObj> data = new List<Overtake.OvertakeObj>();

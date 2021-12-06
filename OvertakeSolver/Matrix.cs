@@ -236,7 +236,10 @@ namespace OvertakeSolver
             {
                 for (int j = 0; j < matrix.MatrixArr[0].Length; j++)
                 {
-                    newMatrix.MatrixArr[i][j] = Util.Sigmoid(matrix.MatrixArr[i][j]);
+                    //Console.WriteLine("Before: " + newMatrix.MatrixArr[i][j]);
+                    newMatrix.MatrixArr[i][j] = 1 / (1 + Math.Pow(Math.E, -matrix.MatrixArr[i][j]));
+                    //Console.WriteLine("After: " + newMatrix.MatrixArr[i][j]);
+                    //Console.ReadKey(true);
                 }
             }
 
@@ -259,7 +262,7 @@ namespace OvertakeSolver
 
                 for (int j = 0; j < this.MatrixArr[0].Length; j++)
                 {
-                    output += this.MatrixArr[i][j] + ", ";
+                    output += this.MatrixArr[i][j] + (j != this.MatrixArr[0].Length - 1 ? ", " : "");
                 }
 
                 output += "]\n";

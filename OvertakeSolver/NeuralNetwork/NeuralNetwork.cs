@@ -38,19 +38,27 @@ namespace OvertakeSolver
 
         public void Train(double[] inputs, double[] targetedOutputs)
         {
-            Matrix inputsMatrix = Matrix.Convert(inputs);
+            Matrix inputsMatrix = Matrix.Convert(inputs).Transpose();
             Matrix targetedOutputsMatrix = Matrix.Convert(targetedOutputs);
 
-            Matrix hiddenLayerOutputs = Matrix.Sigmoid(WeightsBetweenInputAndHidden * inputsMatrix);
-            Matrix outputLayerOutputs = Matrix.Sigmoid(WeightsBetweenHiddenAndOutput * hiddenLayerOutputs);
+            //all of these return the same number repeated for some reason so sigmoid might be broken
+            //Console.WriteLine(this.WeightsBetweenInputAndHidden);
+            //Console.WriteLine(inputsMatrix);
+            ////why does this result in a matrix of 0s?
+            //Console.WriteLine(this.WeightsBetweenInputAndHidden * inputsMatrix);
+            //Console.ReadKey();
+            Matrix hiddenLayerOutputs = Matrix.Sigmoid(this.WeightsBetweenInputAndHidden * inputsMatrix);
+            Matrix outputLayerOutputs = Matrix.Sigmoid(this.WeightsBetweenHiddenAndOutput * hiddenLayerOutputs);
 
+            //minus may be broken
             Matrix errors = targetedOutputsMatrix - outputLayerOutputs;
+            Matrix hiddenErrors = this.WeightsBetweenHiddenAndOutput.Transpose() * errors;
 
             this.WeightsBetweenHiddenAndOutput += this.LearnRate * errors * outputLayerOutputs * (1.0 - outputLayerOutputs) * hiddenLayerOutputs.Transpose();
 
-            Matrix hiddenErrors = this.WeightsBetweenHiddenAndOutput.Transpose() * errors;
+            Matrix newIHWeights = this.LearnRate * hiddenErrors * hiddenLayerOutputs * (1.0 - hiddenLayerOutputs) * inputsMatrix.Transpose();
 
-            this.WeightsBetweenInputAndHidden += this.LearnRate * hiddenErrors * hiddenLayerOutputs * (1.0 - hiddenLayerOutputs) * inputsMatrix.Transpose();
+            this.WeightsBetweenInputAndHidden += newIHWeights;
 
         }
 

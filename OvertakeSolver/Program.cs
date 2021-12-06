@@ -23,6 +23,12 @@ namespace OvertakeSolver
         {
             Overtake.OvertakeDataGet.SetRandomRepeatable();
 
+            //Console.WriteLine(Matrix.Sigmoid(new Matrix(new double[][] { new double[] { 0, 0 }, new double[] { 0, 0 } })));
+
+            //Console.ReadKey(true);
+
+            //Environment.Exit(0);
+
             Task menuTask = new Task(() => StartMenuThread());
             menuTask.Start();
 

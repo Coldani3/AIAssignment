@@ -15,6 +15,7 @@ namespace OvertakeSolver
 
         public override void BeginTraining()
         {
+            Program.DrawMenu = false;
             //train the AIs
             Overtake.OvertakeObj data;
 
@@ -31,6 +32,8 @@ namespace OvertakeSolver
                     this.ArtificialIntelligenceTrain(intelligence, data.InitialSeparationM, data.OvertakingSpeedMPS, data.OncomingSpeedMPS, data.Success);
                 }
             }
+
+            
         }
     }
 }

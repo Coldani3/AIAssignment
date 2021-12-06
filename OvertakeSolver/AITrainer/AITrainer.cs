@@ -24,21 +24,24 @@ namespace OvertakeSolver
 
         public void ValidateSuccessRates()
         {
+            Program.DrawMenu = false;
             Dictionary<ArtificialIntelligence, int> aiSuccessfulPredictions = new Dictionary<ArtificialIntelligence, int>();
 
             //get success rates of AIs.
 
             foreach (ArtificialIntelligence intelligence in AIsTraining)
             {
-                Console.WriteLine("----Intelligence #" + AIsTraining.IndexOf(intelligence) + "----");
+                aiSuccessfulPredictions.Add(intelligence, 0);
+
+                Console.WriteLine("----Intelligence #" + AIsTraining.IndexOf(intelligence) + "----\n");
                 foreach (Overtake.OvertakeObj comparisonDataObj in this.ComparisonData)
                 {
                     bool output = this.ArtificialIntelligenceQuery(intelligence, comparisonDataObj.InitialSeparationM, comparisonDataObj.OvertakingSpeedMPS, comparisonDataObj.OncomingSpeedMPS);
-                    Console.WriteLine($"Initial Separation: {comparisonDataObj.InitialSeparationM}, Overtaking Speed (MPS): {comparisonDataObj.OvertakingSpeedMPS}, Oncoming Speed (MPS): {comparisonDataObj.OncomingSpeedMPS}, Predicted: {(output ? "True" : "False")}");
+                    Console.Write($"Initial Separation: {comparisonDataObj.InitialSeparationM}, Overtaking Speed (MPS): {comparisonDataObj.OvertakingSpeedMPS}, Oncoming Speed (MPS): {comparisonDataObj.OncomingSpeedMPS}, Predicted: {(output ? "True" : "False")}");
 
                     if (output != comparisonDataObj.Success)
                     {
-                        Console.Write("    X Incorrect");
+                        Console.Write("    X Incorrect\n");
                     }
                     else
                     {
@@ -49,6 +52,10 @@ namespace OvertakeSolver
             }
 
             this.DisplaySuccessRates(aiSuccessfulPredictions);
+
+            Console.ReadKey(true);
+
+            Program.DrawMenu = true;
         }
 
         public void DisplaySuccessRates(Dictionary<ArtificialIntelligence, int> aiSuccessfulPredictions)
