@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace OvertakeSolver
 {
-    public interface ArtificialIntelligence
+    public interface TrainableAI
     {
-        double[] Query(double[] inputs);
+        void Train(double[] input, double[] expectedOutputs);
     }
 }

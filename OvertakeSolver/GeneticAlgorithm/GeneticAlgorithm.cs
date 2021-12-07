@@ -4,24 +4,49 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OvertakeSolver
+namespace OvertakeSolver.GeneticAlgorithm
 {
-    //Feed genetic AIs a stream of the blackbox values, then test to see which ones got the most right and prefer those.
-    class GeneticAlgorithm : ArtificialIntelligence
+    class GeneticAlgorithm : AITrainer
     {
-        public double[] Query(double[] inputs)
+        public static int MaxTopFromGeneration = 4;
+        public static int MutationRate;
+
+        public GeneticAlgorithm(List<ArtificialIntelligence> ais, int trainingSetSize, int comparisonSetSize) : base(ais, trainingSetSize, comparisonSetSize)
         {
-            throw new NotImplementedException();
         }
 
-        public void Train(double[] input, double[] expectedOutputs)
+        public override void BeginTraining()
         {
-            throw new NotImplementedException();
+            Dictionary<GeneticAlgorithmAI, double> fitnesses = new Dictionary<GeneticAlgorithmAI, double>();
+
+            foreach (GeneticAlgorithmAI ai in this.AIsTraining)
+            {
+                fitnesses.Add(ai, GetFitness(ai));
+            }
+
+            GeneticAlgorithmAI[] orderedFitnesses = fitnesses.OrderByDescending((pair) => pair.Value).Select((kvp) => kvp.Key).ToArray();
+
+            GeneticAlgorithmAI[] fittest = orderedFitnesses.Take(MaxTopFromGeneration).ToArray();
         }
 
-        public double GetFitness()
+        public double GetFitness(GeneticAlgorithmAI ai)
         {
-            throw new NotImplementedException();
+            int successes = 0;
+
+            foreach (Overtake.OvertakeObj data in Program.SampleSet)
+            {
+                if (ArtificialIntelligenceQuery(ai, data.InitialSeparationM, data.OvertakingSpeedMPS, data.OncomingSpeedMPS))
+                {
+                    successes++;
+                }
+            }
+
+            return (double) successes / (double) Program.SampleSet.Count;
+        }
+
+        public void Breed(GeneticAlgorithmAI[] fittest)
+        {
+
         }
     }
 }

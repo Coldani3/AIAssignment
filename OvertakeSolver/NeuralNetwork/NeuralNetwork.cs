@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OvertakeSolver
 {
-    public class NeuralNetwork : ArtificialIntelligence
+    public class NeuralNetwork : ArtificialIntelligence, TrainableAI
     {
         private int InputNodes;
         private int OutputNodes;

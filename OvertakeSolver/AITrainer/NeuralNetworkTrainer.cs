@@ -29,7 +29,7 @@ namespace OvertakeSolver
 
                 foreach (Overtake.OvertakeObj data in Program.SampleSet)
                 {
-                    foreach (ArtificialIntelligence intelligence in AIsTraining)
+                    foreach (NeuralNetwork intelligence in AIsTraining)
                     {
                         //data = Overtake.OvertakeDataGet.NextOvertake();
                         this.ArtificialIntelligenceTrain(intelligence, data.InitialSeparationM, data.OvertakingSpeedMPS, data.OncomingSpeedMPS, data.Success);
