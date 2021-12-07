@@ -12,11 +12,14 @@ namespace OvertakeSolver
         public int TrainingSetSize;
         public int ComparisonSetSize;
         public List<Overtake.OvertakeObj> ComparisonData;
+        public const int MaxSeparation = 280;
+        public const int MaxOvertakingSpeed = 33;
+        public const int MaxOncomingSpeed = 33;
 
         public AITrainer(List<ArtificialIntelligence> ais, int trainingSetSize, int comparisonSetSize)
         {
             this.AIsTraining = ais;
-            this.ComparisonData = Util.GetDataForComparing(comparisonSetSize);
+            this.ComparisonData = Program.SampleSet; //Util.GetDataForComparing(comparisonSetSize);
             this.TrainingSetSize = trainingSetSize;
         }
 
@@ -41,21 +44,22 @@ namespace OvertakeSolver
 
                     if (output != comparisonDataObj.Success)
                     {
-                        Console.Write("    X Incorrect\n");
+                        Console.Write("    X Incorrect");
                     }
                     else
                     {
                         aiSuccessfulPredictions[intelligence]++;
                     }
 
+                    Console.Write('\n');
                 }
             }
 
             this.DisplaySuccessRates(aiSuccessfulPredictions);
 
-            Console.ReadKey(true);
+            //Console.ReadKey(true);
 
-            Program.DrawMenu = true;
+            //Program.DrawMenu = true;
         }
 
         public void DisplaySuccessRates(Dictionary<ArtificialIntelligence, int> aiSuccessfulPredictions)
@@ -64,19 +68,22 @@ namespace OvertakeSolver
 
             foreach (ArtificialIntelligence intelligence in aiSuccessfulPredictions.Keys)
             {
-                double success = (aiSuccessfulPredictions[intelligence] / this.ComparisonData.Count) * 100;
-                Console.WriteLine($"Intelligence #{this.AIsTraining.IndexOf(intelligence)} Success Rate: {success}%");
+                double success = ((double) aiSuccessfulPredictions[intelligence] / (double) this.ComparisonData.Count) * 100.0;
+                Console.WriteLine($"Intelligence #{this.AIsTraining.IndexOf(intelligence)} Success Rate: {success.ToString("###.##")}% Successes: {aiSuccessfulPredictions[intelligence]}");
             }
+
+            //aiSuccessfulPredictions.Keys.ToList().ForEach((ai) => Console.WriteLine(ai));
         }
 
         public void ArtificialIntelligenceTrain(ArtificialIntelligence network, double initialSeparation, double overtakingSpeedMPS, double oncomingSpeedMPS, bool canOvertake)
         {
-            network.Train(Util.NormaliseArray(new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS }, 300, 40, 40), new double[] { Util.Normalise(canOvertake) });
+            double[] normalisedInputs = Util.NormaliseArray(new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS }, MaxSeparation, MaxOvertakingSpeed, MaxOncomingSpeed);
+            network.Train(normalisedInputs, new double[] { Util.BoolToNormalised(canOvertake) });
         }
 
         public bool ArtificialIntelligenceQuery(ArtificialIntelligence network, double initialSeparation, double overtakingSpeedMPS, double oncomingSpeedMPS)
         {
-            return Util.NormaliseOutput(network.Query(Util.NormaliseArray(new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS }, 300, 40, 40))[0]) == 0.99;
+            return Util.RawOuputToNormalised(network.Query(Util.NormaliseArray(new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS }, MaxSeparation, MaxOvertakingSpeed, MaxOncomingSpeed))[0]) == 0.99;
         }
     }
 }

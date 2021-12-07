@@ -22,7 +22,7 @@ namespace OvertakeSolver
 
         public static double Normalise(double input, double max)
         {
-            return input / max;
+            return (input / max) + 0.01;
         }
 
         public static double[] NormaliseArray(double[] array, params double[] maxes)
@@ -37,12 +37,12 @@ namespace OvertakeSolver
             return newArray;
         }
 
-        public static double Normalise(bool input)
+        public static double BoolToNormalised(bool input)
         {
             return input ? 0.99 : 0.01;
         }
 
-        public static double NormaliseOutput(double input)
+        public static double RawOuputToNormalised(double input)
         {
             return input > 0.5 ? 0.99 : 0.01;
         }

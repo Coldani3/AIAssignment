@@ -7,10 +7,13 @@ namespace OvertakeSolver
 {
     class Program
     {
+        static int InputNodes = 3;
+        static int OutputNodes = 1;
         static int HiddenNodes = 2;
         static int AIs = 20;
-        static int TrainingSetSize = 500;
-        static int ComparisonSetSize = 100;
+        public static int Epochs = 20;
+        static int TrainingSetSize = 100;
+        static int ComparisonSetSize = 500;
         static bool Running = true;
         static List<ArtificialIntelligence> AIsList = new List<ArtificialIntelligence>();
         static AITrainer Trainer;
@@ -18,12 +21,14 @@ namespace OvertakeSolver
         //1 for neural, 2 for genetic
         public static int SelectedAI = 0;
         public static bool DrawMenu = true;
+        public static double LearningRate = 0.001;
+        public static List<Overtake.OvertakeObj> SampleSet = Util.GetDataForComparing(TrainingSetSize);
 
         static void Main(string[] args)
         {
             Overtake.OvertakeDataGet.SetRandomRepeatable();
 
-            //Console.WriteLine(Matrix.Sigmoid(new Matrix(new double[][] { new double[] { 0, 0 }, new double[] { 0, 0 } })));
+            //IrisTest.Run();
 
             //Console.ReadKey(true);
 
@@ -58,9 +63,12 @@ namespace OvertakeSolver
             long trainingDone = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
             long trainingTime = trainingDone - trainingStart;
 
+            trainer.ValidateSuccessRates();
+
             Console.WriteLine($"Training complete in {trainingTime} milliseconds ({Util.GetTimeTakenFormatted(trainingTime)})");
 
-            trainer.ValidateSuccessRates();
+            Console.ReadKey(true);
+            DrawMenu = true;
         }
 
         public static void SelectNeuralNetwork()
@@ -69,7 +77,7 @@ namespace OvertakeSolver
             //1 output: if you can overtake
             for (int i = 0; i < AIs; i++)
             {
-                AIsList.Add(new NeuralNetwork(3, 1, HiddenNodes, 0.5));
+                AIsList.Add(new NeuralNetwork(InputNodes, OutputNodes, HiddenNodes, LearningRate));
             }
 
             Trainer = new NeuralNetworkTrainer(AIsList, TrainingSetSize, ComparisonSetSize);

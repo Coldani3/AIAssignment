@@ -38,19 +38,20 @@ namespace OvertakeSolver
 
         public void Train(double[] inputs, double[] targetedOutputs)
         {
-            Matrix inputsMatrix = Matrix.Convert(inputs).Transpose();
-            Matrix targetedOutputsMatrix = Matrix.Convert(targetedOutputs);
+            //apparently this doesn't work unless I transpose this?
+            Matrix inputsMatrix = new Matrix(Matrix.ConvertInputs(inputs));
+            Matrix targetedOutputsMatrix = new Matrix(Matrix.ConvertInputs(targetedOutputs));
 
-            //all of these return the same number repeated for some reason so sigmoid might be broken
             //Console.WriteLine(this.WeightsBetweenInputAndHidden);
             //Console.WriteLine(inputsMatrix);
             ////why does this result in a matrix of 0s?
             //Console.WriteLine(this.WeightsBetweenInputAndHidden * inputsMatrix);
             //Console.ReadKey();
+
+            //fsr these aren't compatible dimensions so this always returns a bunch of 0.5s (ie. 0s)
             Matrix hiddenLayerOutputs = Matrix.Sigmoid(this.WeightsBetweenInputAndHidden * inputsMatrix);
             Matrix outputLayerOutputs = Matrix.Sigmoid(this.WeightsBetweenHiddenAndOutput * hiddenLayerOutputs);
 
-            //minus may be broken
             Matrix errors = targetedOutputsMatrix - outputLayerOutputs;
             Matrix hiddenErrors = this.WeightsBetweenHiddenAndOutput.Transpose() * errors;
 
@@ -67,8 +68,12 @@ namespace OvertakeSolver
             //double[] inputs = new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS };
 
             //outputs of a layer equals the sigmoid of the weights times the input. do this for all layers
-            Matrix outputs = Matrix.Sigmoid(this.WeightsBetweenHiddenAndOutput * Matrix.Sigmoid(this.WeightsBetweenInputAndHidden * Matrix.Convert(inputs)));
-            return Matrix.Flatten(outputs);
+            Matrix inputMatrix = new Matrix(Matrix.ConvertInputs(inputs));
+            Matrix hiddenLayerOutputs = Matrix.Sigmoid(this.WeightsBetweenInputAndHidden * inputMatrix);
+            Matrix outputLayerOutputs = Matrix.Sigmoid(this.WeightsBetweenHiddenAndOutput * hiddenLayerOutputs);
+
+            //Matrix outputs = Matrix.Sigmoid(this.WeightsBetweenHiddenAndOutput * Matrix.Sigmoid(this.WeightsBetweenInputAndHidden * new Matrix(Matrix.ConvertInputs(inputs))));
+            return Matrix.Flatten(outputLayerOutputs);
         }
 
         public override string ToString()

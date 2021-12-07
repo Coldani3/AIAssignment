@@ -17,19 +17,23 @@ namespace OvertakeSolver
         {
             Program.DrawMenu = false;
             //train the AIs
-            Overtake.OvertakeObj data;
+            //Overtake.OvertakeObj data;
 
             Console.Clear();
             Console.WriteLine("Epoch: ");
 
-            for (int i = 0; i < TrainingSetSize; i++)
+            for (int i = 0; i < Program.Epochs; i++)
             {
                 Console.SetCursorPosition(7, 0);
                 Console.Write(i + "      ");
-                foreach (ArtificialIntelligence intelligence in AIsTraining)
+
+                foreach (Overtake.OvertakeObj data in Program.SampleSet)
                 {
-                    data = Overtake.OvertakeDataGet.NextOvertake();
-                    this.ArtificialIntelligenceTrain(intelligence, data.InitialSeparationM, data.OvertakingSpeedMPS, data.OncomingSpeedMPS, data.Success);
+                    foreach (ArtificialIntelligence intelligence in AIsTraining)
+                    {
+                        //data = Overtake.OvertakeDataGet.NextOvertake();
+                        this.ArtificialIntelligenceTrain(intelligence, data.InitialSeparationM, data.OvertakingSpeedMPS, data.OncomingSpeedMPS, data.Success);
+                    }
                 }
             }
 

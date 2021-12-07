@@ -104,7 +104,7 @@ namespace OvertakeSolver
             {
                 for (int j = 0; j < b.MatrixArr[i].Length; j++)
                 {
-                    newMatrix[i][j] = b.MatrixArr[i][j] * a;
+                    newMatrix[i][j] = (double) b.MatrixArr[i][j] * (double) a;
                 }
             }
 
@@ -129,17 +129,17 @@ namespace OvertakeSolver
         public static Matrix operator -(Matrix a, Matrix b)
         {
             //could just do a + (b * -1) but that's more performance intensive
-            Matrix result = new Matrix(Util.InstantiateJagged(a.MatrixArr.Length, b.MatrixArr[0].Length));
+            double[][] result = Util.InstantiateJagged(a.MatrixArr.Length, b.MatrixArr[0].Length);
 
             for (int i = 0; i < a.MatrixArr.Length; i++)
             {
                 for (int j = 0; j < a.MatrixArr[i].Length; j++)
                 {
-                    result.MatrixArr[i][j] = a.MatrixArr[i][j] - b.MatrixArr[i][j];
+                    result[i][j] = a.MatrixArr[i][j] - b.MatrixArr[i][j];
                 }
             }
 
-            return result;
+            return new Matrix(result);
         }
 
         public static Matrix operator -(double a, Matrix b)
@@ -158,7 +158,7 @@ namespace OvertakeSolver
         public static Matrix operator *(Matrix a, Matrix b)
         {
             /*I'm not entirely sure why this works and my original didn't but I spent too long trying to figure it out
-            so I just gave up and copied it from https://github.com/Hagsten/NeuralNetwork/blob/master/NeuralNetwork/Matrix.cs*/
+            so I just gave up and copied it from https://github.com/Hagsten/NeuralNetwork/blob/master/NeuralNetwork/Matrix.cs */
 
 
             if (a.MatrixArr.Length == b.MatrixArr.Length && a.MatrixArr[0].Length == b.MatrixArr[0].Length)
@@ -186,9 +186,9 @@ namespace OvertakeSolver
                 {
                     for (int j = 0; j < b.MatrixArr[0].Length; j++)
                     {
-                        var temp = 0.0;
+                        double temp = 0.0;
 
-                        for (var k = 0; k < length; k++)
+                        for (int k = 0; k < length; k++)
                         {
                             temp += a.MatrixArr[i][k] * b.MatrixArr[k][j];
                         }
@@ -234,7 +234,7 @@ namespace OvertakeSolver
 
             for (int i = 0; i < matrix.MatrixArr.Length; i++)
             {
-                for (int j = 0; j < matrix.MatrixArr[0].Length; j++)
+                for (int j = 0; j < matrix.MatrixArr[i].Length; j++)
                 {
                     //Console.WriteLine("Before: " + newMatrix.MatrixArr[i][j]);
                     newMatrix.MatrixArr[i][j] = 1 / (1 + Math.Pow(Math.E, -matrix.MatrixArr[i][j]));
@@ -244,6 +244,18 @@ namespace OvertakeSolver
             }
 
             return newMatrix;
+        }
+
+        public static double[][] ConvertInputs(double[] inputs)
+        {
+            double[][] output = new double[inputs.Length][];
+
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                output[i] = new double[] { inputs[i] };
+            }
+
+            return output;
         }
 
         public static double[] Flatten(Matrix matrix)
