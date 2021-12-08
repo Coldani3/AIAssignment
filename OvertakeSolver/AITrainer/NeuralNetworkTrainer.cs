@@ -116,6 +116,7 @@ namespace OvertakeSolver
                 Console.WriteLine($"Best Intelligence Success Rate: {Program.BestAISuccessRate.ToString("###.##")}%");
 
                 this.WriteResultsToFile();
+                Console.ReadKey(true);
             }
         }
 
