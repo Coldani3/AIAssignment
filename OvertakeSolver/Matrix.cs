@@ -274,7 +274,7 @@ namespace OvertakeSolver
 
                 for (int j = 0; j < this.MatrixArr[0].Length; j++)
                 {
-                    output += this.MatrixArr[i][j] + (j != this.MatrixArr[0].Length - 1 ? ", " : "");
+                    output += this.MatrixArr[i][j] + (j != this.MatrixArr[0].Length - 1 ? "," : "");
                 }
 
                 output += "]\n";

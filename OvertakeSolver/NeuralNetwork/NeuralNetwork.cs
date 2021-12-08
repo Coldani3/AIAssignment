@@ -33,14 +33,47 @@ namespace OvertakeSolver
             double[] nodeSettingsAndLearnRate = trianglesSplit[0].Split(',').Select((x) => double.Parse(x)).ToArray();
 
             this.LearnRate = nodeSettingsAndLearnRate.Last();
-            this.InputNodes = (int)nodeSettingsAndLearnRate[0];
+            this.InputNodes = (int) nodeSettingsAndLearnRate[0];
             this.OutputNodes = (int) nodeSettingsAndLearnRate[1];
             this.HiddenNodes = (int) nodeSettingsAndLearnRate[2];
             this.WeightsBetweenInputAndHidden = new Matrix(Util.InstantiateJagged((int) nodeSettingsAndLearnRate[2], (int) nodeSettingsAndLearnRate[0]));
             this.WeightsBetweenHiddenAndOutput = new Matrix(Util.InstantiateJagged((int) nodeSettingsAndLearnRate[1], (int) nodeSettingsAndLearnRate[2]));
 
-            
+            string[] matrices = trianglesSplit[1].Split(':');
+            string[] inputHiddenDoubles = matrices[0].Split(';');
+            string[] hiddenOutputDoubles = matrices[1].Split(';');
 
+            double[][] inputHiddenWeights = UnpackStringArray(inputHiddenDoubles);
+            double[][] hiddenOutputWeights = UnpackStringArray(hiddenOutputDoubles);
+
+            this.WeightsBetweenInputAndHidden = new Matrix(inputHiddenWeights);
+            this.WeightsBetweenHiddenAndOutput = new Matrix(hiddenOutputWeights);
+
+        }
+
+        public static double[][] UnpackStringArray(string[] matrix)
+        {
+            string[] matrixCopy = matrix;
+            List<double[]> result = new List<double[]>();
+
+            for (int i = 0; i < matrix.Length; i++)
+            {
+                if (matrixCopy[i].StartsWith('['))
+                {
+                    matrixCopy[i] = matrixCopy[i].Substring(1);
+                }
+
+                if (matrixCopy[i].EndsWith(']'))
+                {
+                    matrixCopy[i] = matrixCopy[i].Remove(matrixCopy[i].IndexOf(']'));
+                }
+
+                string[] nums = matrixCopy[i].Split(',');
+
+                result.Add(nums.Select(x => double.Parse(x)).ToArray());
+            }
+
+            return result.ToArray();
         }
 
         public void RandomiseWeights()
@@ -58,13 +91,6 @@ namespace OvertakeSolver
             Matrix inputsMatrix = new Matrix(Matrix.ConvertInputs(inputs));
             Matrix targetedOutputsMatrix = new Matrix(Matrix.ConvertInputs(targetedOutputs));
 
-            //Console.WriteLine(this.WeightsBetweenInputAndHidden);
-            //Console.WriteLine(inputsMatrix);
-            ////why does this result in a matrix of 0s?
-            //Console.WriteLine(this.WeightsBetweenInputAndHidden * inputsMatrix);
-            //Console.ReadKey();
-
-            //fsr these aren't compatible dimensions so this always returns a bunch of 0.5s (ie. 0s)
             Matrix hiddenLayerOutputs = Matrix.Sigmoid(this.WeightsBetweenInputAndHidden * inputsMatrix);
             Matrix outputLayerOutputs = Matrix.Sigmoid(this.WeightsBetweenHiddenAndOutput * hiddenLayerOutputs);
 
@@ -94,7 +120,7 @@ namespace OvertakeSolver
 
         public override string ToString()
         {
-            return $"<{String.Join(',', this.InputNodes, this.OutputNodes, this.HiddenNodes, this.LearnRate)}>\n{this.WeightsBetweenInputAndHidden}\n{this.WeightsBetweenHiddenAndOutput}";
+            return $"<{String.Join(',', this.InputNodes, this.OutputNodes, this.HiddenNodes, this.LearnRate)}>:{this.WeightsBetweenInputAndHidden.ToString().Replace('\n', ';')}:{this.WeightsBetweenHiddenAndOutput}";
         }
 
         public ArtificialIntelligence Copy(ArtificialIntelligence ai)

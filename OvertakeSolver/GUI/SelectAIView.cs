@@ -14,7 +14,7 @@ namespace OvertakeSolver
 
         public override void Display()
         {
-            Console.WriteLine("Select which AI to use:");
+            Console.WriteLine("Select which AI to use (using Dataset V3):");
             base.Display();
         }
     }
