@@ -46,6 +46,7 @@ namespace OvertakeSolver.GeneticAlgorithm
 
         public void Breed(GeneticAlgorithmAI[] fittest)
         {
+            //pick 2/3 genes from both parents, alter rest and add the fittest set to the new generation
 
 
         }

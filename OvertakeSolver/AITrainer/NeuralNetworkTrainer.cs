@@ -30,23 +30,26 @@ namespace OvertakeSolver
                 double percentage;
                 string progressBar = "";
                 Console.SetCursorPosition(7, 0);
+                //extra spaces are to avoid artifacts of previous prints
                 Console.Write(i + "      ");
                 Console.SetCursorPosition(0, 2);
                 Console.Write("       ");
 
-                foreach (Overtake.OvertakeObj data in trainingData)//Program.SampleSet)
+                foreach (Overtake.OvertakeObj data in trainingData)
                 {
                     foreach (NeuralNetwork intelligence in AIsTraining)
                     {
-                        //data = Overtake.OvertakeDataGet.NextOvertake();
+                        //train each intelligence with the same data
                         this.ArtificialIntelligenceTrain(intelligence, data.InitialSeparationM, data.OvertakingSpeedMPS, data.OncomingSpeedMPS, data.Success);
                     }
 
                     Console.SetCursorPosition(0, 1);
+                    //calculate percentage
                     percentage = (double) trainingData.IndexOf(data) / (double) trainingData.Count;
 
                     if (percentage * 10 > progressBar.Length / 4)
                     {
+                        //adding 4 for BIG bar
                         progressBar += "████";
                     }
 
@@ -54,7 +57,9 @@ namespace OvertakeSolver
                     {
                         Console.Write(progressBar);
                         Console.SetCursorPosition(0, 2);
+                        //clear percentage line
                         Console.Write("            ");
+                        //set percentage to be right aligned to avoid the percentage sign flickering back and forth
                         Console.SetCursorPosition(2 - percentage.ToString().Split('.')[0].Length, 2);
                         Console.Write((percentage * 100).ToString("###.##"));
                         Console.SetCursorPosition(6, 2);
@@ -63,6 +68,7 @@ namespace OvertakeSolver
                     }
                 }
 
+                //wipe the progress bar line
                 Console.SetCursorPosition(0, 1);
                 Console.Write(new String(' ', 40));
             }
@@ -74,22 +80,23 @@ namespace OvertakeSolver
         {
             if (orderedPredictions.Count > 4)
             {
-                //Select 4 best AIs
+                //Select 4 best AIs, temporarily changing the epochs
                 int originalEpochs = Program.Epochs;
                 Program.Epochs = 500;
                 List<ArtificialIntelligence> topFour = orderedPredictions.Take(4).Select(x => x.Key).ToList();
 
-                //also adjust the learning rates as these should be closer to perfect
+                //also adjust the learning rates as these initial 4 should be closer to perfect, so large learning rates could cause them
+                //to overfit
                 foreach (ArtificialIntelligence ai in topFour)
                 {
                     NeuralNetwork network = (NeuralNetwork)ai;
                     network.LearnRate = 0.0001;
                 }
 
-                //then run them through another round of training to refine them further.
-
+                //then run them through another round of training to refine them further with a data set a fourth the size.
                 Program.InitiateTraining(new NeuralNetworkTrainer(topFour, Program.SampleSet, (int) Math.Round(Program.ComparisonSetSize * 0.2)));
 
+                //reset epochs
                 Program.Epochs = originalEpochs;
             }
             else
@@ -108,15 +115,19 @@ namespace OvertakeSolver
 
                 Console.WriteLine($"Best Intelligence Success Rate: {Program.BestAISuccessRate.ToString("###.##")}%");
 
-                if (!File.Exists(Program.BestNeuralsFile))
-                {
-                    File.Create(Program.BestNeuralsFile).Close();
-                }
+                this.WriteResultsToFile();
+            }
+        }
 
-                File.AppendAllText(Program.BestNeuralsFile, ((NeuralNetwork) Program.CurrentBestAI).ToString());
+        public virtual void WriteResultsToFile()
+        {
+            //write best AI to file
+            if (!File.Exists(Program.BestNeuralsFile))
+            {
+                File.Create(Program.BestNeuralsFile).Close();
             }
 
-
+            File.AppendAllText(Program.BestNeuralsFile, ((NeuralNetwork)Program.CurrentBestAI).ToString());
         }
     }
 }

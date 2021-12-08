@@ -23,7 +23,7 @@ namespace OvertakeSolver
         static AITrainer Trainer;
         public static MenuManager MenuManager;
         //1 for neural, 2 for genetic
-        public static int MenuOption = 0;
+        public static MenuOptions MenuOption = MenuOptions.None;
         public static bool DrawMenu = true;
         public static double LearningRate = 0.8;
         public static List<Overtake.OvertakeObj> SampleSet = Util.GetDataForComparing(TrainingSetSize);
@@ -36,26 +36,31 @@ namespace OvertakeSolver
             Console.Title = "Overtake Solver (using Dataset V3)";
             Overtake.OvertakeDataGet.SetRandomRepeatable();
 
+            //start menu thread so it doesn't block AI training and querying.
             Task menuTask = new Task(() => StartMenuThread());
             menuTask.Start();
 
             while (Running)
             {
-                //wait until the UI selects an AI to use
-                while (MenuOption == 0) ;
+                //wait until the UI selects an AI to use so we can process the AIs in their own thread
+                while (MenuOption == MenuOptions.None) ;
 
                 switch (MenuOption)
                 {
-                    case 1:
+                    case MenuOptions.NeuralNetwork:
                         SelectNeuralNetwork();
                         break;
 
-                    case 2:
+                    case MenuOptions.GeneticAlgorithm:
                         SelectGeneticAlgorithm();
                         break;
 
-                    case 3:
+                    case MenuOptions.LoadNeuralNetwork:
                         MenuManager.ChangeMenu(new LoadNeuralAIMenu());
+                        break;
+
+                    case MenuOptions.Exit:
+                        Running = false;
                         break;
                 }
             }
@@ -121,7 +126,10 @@ namespace OvertakeSolver
                                                         SelectGeneticAlgorithm(); 
                                                     },
                                                     () => {
-                                                        MenuOption = 3;
+                                                        MenuOption = MenuOptions.LoadNeuralNetwork;
+                                                    },
+                                                    () => {
+                                                        MenuOption = MenuOptions.Exit;
                                                     }
                                                 });
             Renderer renderer = new Renderer();

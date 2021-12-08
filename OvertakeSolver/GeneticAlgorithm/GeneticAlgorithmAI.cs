@@ -11,6 +11,8 @@ namespace OvertakeSolver
     {
         //Each gene is a minimum ratio between the three input values.
         /*
+         * distance - oncoming
+         * overtaking 
          * Distance->Overtaking
          * Distance->Oncoming
          * Overtaking->Oncoming

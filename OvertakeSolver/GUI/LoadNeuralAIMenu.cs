@@ -11,7 +11,7 @@ namespace OvertakeSolver
     {
         private static NeuralNetwork[] Networks;
 
-        public LoadNeuralAIMenu() : base(GetAIs(), GenActions)
+        public LoadNeuralAIMenu() : base(GetAIs(), GenActions())
         {
         }
 
@@ -26,7 +26,17 @@ namespace OvertakeSolver
             return ais;
         }
 
-        public static Action[] GenActions() => Networks.Select((x) => { return () => RunAI(x); }).ToArray();
+        public static Action[] GenActions()
+        {
+            List<Action> actions = new List<Action>();
+
+            foreach (NeuralNetwork network in Networks)
+            {
+                actions.Add(() => RunAI(network));
+            }
+
+            return actions.ToArray();
+        }
 
         public static void RunAI(NeuralNetwork network)
         {

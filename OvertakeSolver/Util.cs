@@ -20,6 +20,7 @@ namespace OvertakeSolver
             return result;
         }
 
+        #region Normalisation functions
         public static double Normalise(double input, double max)
         {
             return (input / max) + 0.01;
@@ -46,6 +47,7 @@ namespace OvertakeSolver
         {
             return input > 0.5 ? 0.99 : 0.01;
         }
+        #endregion
 
         public static List<Overtake.OvertakeObj> GetDataForComparing(int size)
         {
@@ -69,6 +71,7 @@ namespace OvertakeSolver
                                     time.Seconds,
                                     time.Milliseconds).Split(':'));
 
+            //get rid of empty time units, by clearing the first in the list until a time with a value greater than 0 is found, then stop.
             foreach (int unit in new int[] { time.Hours, time.Minutes, time.Seconds })
             {
                 if (unit < 1)

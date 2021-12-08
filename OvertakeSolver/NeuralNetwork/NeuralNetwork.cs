@@ -29,7 +29,7 @@ namespace OvertakeSolver
 
         public NeuralNetwork(string settings)
         {
-            string[] trianglesSplit = settings.Split('<', '>');
+            string[] trianglesSplit = settings.Split('<', '>').Skip(1).ToArray();
             double[] nodeSettingsAndLearnRate = trianglesSplit[0].Split(',').Select((x) => double.Parse(x)).ToArray();
 
             this.LearnRate = nodeSettingsAndLearnRate.Last();
@@ -58,6 +58,11 @@ namespace OvertakeSolver
 
             for (int i = 0; i < matrix.Length; i++)
             {
+                if (matrixCopy[i] == "")
+                {
+                    continue;
+                }
+
                 if (matrixCopy[i].StartsWith('['))
                 {
                     matrixCopy[i] = matrixCopy[i].Substring(1);
