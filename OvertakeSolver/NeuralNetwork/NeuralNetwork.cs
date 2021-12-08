@@ -27,6 +27,19 @@ namespace OvertakeSolver
             this.RandomiseWeights();
         }
 
+        public NeuralNetwork(string settings)
+        {
+            string[] trianglesSplit = settings.Split('<', '>');
+            double[] nodeSettingsAndLearnRate = trianglesSplit[0].Split(',').Select((x) => double.Parse(x)).ToArray();
+
+            this.LearnRate = nodeSettingsAndLearnRate.Last();
+            this.WeightsBetweenInputAndHidden = new Matrix(Util.InstantiateJagged((int) nodeSettingsAndLearnRate[2], (int) nodeSettingsAndLearnRate[0]));
+            this.WeightsBetweenHiddenAndOutput = new Matrix(Util.InstantiateJagged((int)nodeSettingsAndLearnRate[1], (int)nodeSettingsAndLearnRate[2]));
+
+            
+
+        }
+
         public void RandomiseWeights()
         {
             Random random = new Random();
