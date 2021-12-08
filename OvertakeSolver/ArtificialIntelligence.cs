@@ -9,5 +9,6 @@ namespace OvertakeSolver
     public interface ArtificialIntelligence
     {
         double[] Query(double[] inputs);
+        ArtificialIntelligence Copy(ArtificialIntelligence ai);
     }
 }

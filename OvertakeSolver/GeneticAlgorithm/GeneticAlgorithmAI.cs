@@ -9,7 +9,10 @@ namespace OvertakeSolver
     //Feed genetic AIs a stream of the blackbox values, then test to see which ones got the most right and prefer those.
     public class GeneticAlgorithmAI : ArtificialIntelligence
     {
-
+        public ArtificialIntelligence Copy(ArtificialIntelligence ai)
+        {
+            throw new NotImplementedException();
+        }
 
         public double[] Query(double[] inputs)
         {

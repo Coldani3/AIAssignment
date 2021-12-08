@@ -11,7 +11,7 @@ namespace OvertakeSolver
         private int InputNodes;
         private int OutputNodes;
         private int HiddenNodes;
-        private double LearnRate;
+        public double LearnRate;
         private Matrix WeightsBetweenInputAndHidden;
         private Matrix WeightsBetweenHiddenAndOutput;
 
@@ -33,8 +33,11 @@ namespace OvertakeSolver
             double[] nodeSettingsAndLearnRate = trianglesSplit[0].Split(',').Select((x) => double.Parse(x)).ToArray();
 
             this.LearnRate = nodeSettingsAndLearnRate.Last();
+            this.InputNodes = (int)nodeSettingsAndLearnRate[0];
+            this.OutputNodes = (int) nodeSettingsAndLearnRate[1];
+            this.HiddenNodes = (int) nodeSettingsAndLearnRate[2];
             this.WeightsBetweenInputAndHidden = new Matrix(Util.InstantiateJagged((int) nodeSettingsAndLearnRate[2], (int) nodeSettingsAndLearnRate[0]));
-            this.WeightsBetweenHiddenAndOutput = new Matrix(Util.InstantiateJagged((int)nodeSettingsAndLearnRate[1], (int)nodeSettingsAndLearnRate[2]));
+            this.WeightsBetweenHiddenAndOutput = new Matrix(Util.InstantiateJagged((int) nodeSettingsAndLearnRate[1], (int) nodeSettingsAndLearnRate[2]));
 
             
 
@@ -92,6 +95,15 @@ namespace OvertakeSolver
         public override string ToString()
         {
             return $"<{String.Join(',', this.InputNodes, this.OutputNodes, this.HiddenNodes, this.LearnRate)}>\n{this.WeightsBetweenInputAndHidden}\n{this.WeightsBetweenHiddenAndOutput}";
+        }
+
+        public ArtificialIntelligence Copy(ArtificialIntelligence ai)
+        {
+            NeuralNetwork network = (NeuralNetwork) ai;
+            NeuralNetwork newNetwork = new NeuralNetwork(network.InputNodes, network.OutputNodes, network.HiddenNodes, network.LearnRate);
+            newNetwork.WeightsBetweenInputAndHidden = network.WeightsBetweenInputAndHidden;
+            newNetwork.WeightsBetweenHiddenAndOutput = network.WeightsBetweenHiddenAndOutput;
+            return newNetwork;
         }
     }
 }

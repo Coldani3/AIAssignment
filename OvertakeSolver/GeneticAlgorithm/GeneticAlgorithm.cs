@@ -11,7 +11,7 @@ namespace OvertakeSolver.GeneticAlgorithm
         public static int MaxTopFromGeneration = 4;
         public static int MutationRate;
 
-        public GeneticAlgorithm(List<ArtificialIntelligence> ais, int trainingSetSize, int comparisonSetSize) : base(ais, trainingSetSize, comparisonSetSize)
+        public GeneticAlgorithm(List<ArtificialIntelligence> ais, List<Overtake.OvertakeObj> trainingSet, int comparisonSetSize) : base(ais, trainingSet, comparisonSetSize)
         {
         }
 

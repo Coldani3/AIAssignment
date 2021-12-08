@@ -8,7 +8,7 @@ namespace OvertakeSolver
 {
     public class GeneticAlgorithmTrainer : AITrainer
     {
-        public GeneticAlgorithmTrainer(List<ArtificialIntelligence> ais, int trainingSetSize, int comparisonSetSize) : base(ais, trainingSetSize, comparisonSetSize)
+        public GeneticAlgorithmTrainer(List<ArtificialIntelligence> ais, List<Overtake.OvertakeObj> trainingSetSize, int comparisonSetSize) : base(ais, trainingSetSize, comparisonSetSize)
         {
 
         }
