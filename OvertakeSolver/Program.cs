@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using ConsoleMenuLibrary;
 
 namespace OvertakeSolver
@@ -9,7 +10,7 @@ namespace OvertakeSolver
     {
         static int InputNodes = 3;
         static int OutputNodes = 1;
-        static int HiddenNodes = 2;
+        static int HiddenNodes = 5;
         static int AIs = 20;
         public static int Epochs = 20;
         static int TrainingSetSize = 100;
@@ -28,9 +29,19 @@ namespace OvertakeSolver
         {
             Overtake.OvertakeDataGet.SetRandomRepeatable();
 
-            //IrisTest.Run();
+            Console.WriteLine(SampleSet[0].InitialSeparationM);
+            Console.WriteLine(Util.Normalise(SampleSet[0].InitialSeparationM, 280));
+            Console.WriteLine(1 / (1 + Math.Pow(Math.E, -Util.Normalise(SampleSet[0].InitialSeparationM, 280))));
+            //It seems to be always predicting True or False - there are 56 values in the sample set that are always true, that's why
+            //it always spits out 56 and 44. Perhaps the weights gravitate around 0.5?
+            Console.WriteLine(SampleSet.Sum(x => x.Success ? 1 : 0));
+            Console.ReadKey(true);
 
-            //Console.ReadKey(true);
+            //Can confirm both of these work
+            //IrisTest.Run();
+            //XorTest.Run();
+
+            Console.ReadKey(true);
 
             //Environment.Exit(0);
 

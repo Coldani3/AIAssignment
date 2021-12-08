@@ -36,7 +36,7 @@ namespace OvertakeSolver
             {
                 aiSuccessfulPredictions.Add(intelligence, 0);
 
-                Console.WriteLine("----Intelligence #" + AIsTraining.IndexOf(intelligence) + "----\n");
+                Console.WriteLine("----Intelligence Process Order: " + AIsTraining.IndexOf(intelligence) + "----\n");
                 foreach (Overtake.OvertakeObj comparisonDataObj in this.ComparisonData)
                 {
                     bool output = this.ArtificialIntelligenceQuery(intelligence, comparisonDataObj.InitialSeparationM, comparisonDataObj.OvertakingSpeedMPS, comparisonDataObj.OncomingSpeedMPS);
@@ -66,10 +66,12 @@ namespace OvertakeSolver
         {
             Console.WriteLine(new String('-', 30));
 
-            foreach (ArtificialIntelligence intelligence in aiSuccessfulPredictions.Keys)
+            Dictionary<ArtificialIntelligence, int> orderedPredictions = new Dictionary<ArtificialIntelligence, int>(aiSuccessfulPredictions.OrderByDescending((item) => item.Value));
+
+            foreach (ArtificialIntelligence intelligence in orderedPredictions.Keys)
             {
                 double success = ((double) aiSuccessfulPredictions[intelligence] / (double) this.ComparisonData.Count) * 100.0;
-                Console.WriteLine($"Intelligence #{this.AIsTraining.IndexOf(intelligence)} Success Rate: {success.ToString("###.##")}% Successes: {aiSuccessfulPredictions[intelligence]}");
+                Console.WriteLine($"Intelligence #{orderedPredictions.Keys.ToList().IndexOf(intelligence) + 1} (process order: {aiSuccessfulPredictions.Keys.ToList().IndexOf(intelligence) + 1}) Success Rate: {success.ToString("###.##")}% Successes: {aiSuccessfulPredictions[intelligence]}");
             }
 
             //aiSuccessfulPredictions.Keys.ToList().ForEach((ai) => Console.WriteLine(ai));
@@ -78,12 +80,14 @@ namespace OvertakeSolver
         public virtual void ArtificialIntelligenceTrain(TrainableAI network, double initialSeparation, double overtakingSpeedMPS, double oncomingSpeedMPS, bool canOvertake)
         {
             double[] normalisedInputs = Util.NormaliseArray(new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS }, MaxSeparation, MaxOvertakingSpeed, MaxOncomingSpeed);
-            network.Train(normalisedInputs, new double[] { Util.BoolToNormalised(canOvertake) });
+            double[] normalisedOutputs = new double[] { Util.BoolToNormalised(canOvertake) };
+            network.Train(normalisedInputs, normalisedOutputs);
         }
 
         public virtual bool ArtificialIntelligenceQuery(ArtificialIntelligence network, double initialSeparation, double overtakingSpeedMPS, double oncomingSpeedMPS)
         {
-            return Util.RawOuputToNormalised(network.Query(Util.NormaliseArray(new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS }, MaxSeparation, MaxOvertakingSpeed, MaxOncomingSpeed))[0]) == 0.99;
+            double output = network.Query(Util.NormaliseArray(new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS }, MaxSeparation, MaxOvertakingSpeed, MaxOncomingSpeed))[0];
+            return Util.RawOuputToNormalised(output) == 0.99;
         }
     }
 }
