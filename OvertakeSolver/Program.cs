@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using ConsoleMenuLibrary;
+using System.IO;
 
 namespace OvertakeSolver
 {
@@ -10,11 +11,11 @@ namespace OvertakeSolver
     {
         public static int InputNodes = 3;
         public static int OutputNodes = 1;
-        public static int HiddenNodes = 6;
+        public static int HiddenNodes = 4;
         public static int AIs = 10;
         public static int Epochs = 15;
-        public static int TrainingSetSize = 150;
-        public static int ComparisonSetSize = 500;
+        public static int TrainingSetSize = 100;
+        public static int ComparisonSetSize = 400;
         public static bool Running = true;
         static List<ArtificialIntelligence> AIsList = new List<ArtificialIntelligence>();
         static AITrainer Trainer;
@@ -22,10 +23,11 @@ namespace OvertakeSolver
         //1 for neural, 2 for genetic
         public static int SelectedAI = 0;
         public static bool DrawMenu = true;
-        public static double LearningRate = 1.3;
+        public static double LearningRate = 0.8;
         public static List<Overtake.OvertakeObj> SampleSet = Util.GetDataForComparing(TrainingSetSize);
         public static ArtificialIntelligence CurrentBestAI;
         public static double BestAISuccessRate;
+        public static string BestNeuralsFile = Path.Combine(Directory.GetCurrentDirectory() + "\\BestNeurals.txt");
 
         static void Main(string[] args)
         {
@@ -78,6 +80,7 @@ namespace OvertakeSolver
             Dictionary<ArtificialIntelligence, int> results = trainer.ValidateSuccessRates();
 
             Console.WriteLine($"Training complete in {trainingTime} milliseconds ({Util.GetTimeTakenFormatted(trainingTime)})");
+            Console.ReadKey(true);
 
             trainer.BasedOnResults(results);
 

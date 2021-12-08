@@ -75,11 +75,14 @@ namespace OvertakeSolver
                 Console.WriteLine($"Intelligence #{orderedPredictions.Keys.ToList().IndexOf(intelligence) + 1} (process order: {aiSuccessfulPredictions.Keys.ToList().IndexOf(intelligence) + 1}) Success Rate: {success.ToString("###.##")}% Successes: {aiSuccessfulPredictions[intelligence]}");
             }
 
-            Console.ReadKey(true);
+            //Console.ReadKey(true);
 
-            ArtificialIntelligence bestAI = orderedPredictions.Take(1).Select(x => x.Key).ToArray()[0];
-            Program.CurrentBestAI = bestAI.Copy(bestAI);
-            Program.BestAISuccessRate = GetSuccessRate(orderedPredictions[bestAI], this.TestData.Count);
+            if (Program.CurrentBestAI == null)
+            {
+                ArtificialIntelligence bestAI = orderedPredictions.Take(1).Select(x => x.Key).ToArray()[0];
+                Program.CurrentBestAI = bestAI.Copy(bestAI);
+                Program.BestAISuccessRate = GetSuccessRate(orderedPredictions[bestAI], this.TestData.Count);
+            }
 
             return orderedPredictions;
 
