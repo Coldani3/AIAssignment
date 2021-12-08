@@ -88,8 +88,8 @@ namespace OvertakeSolver
         public void Train(double[] inputs, double[] targetedOutputs)
         {
             //apparently this doesn't work unless I transpose this?
-            Matrix inputsMatrix = new Matrix(Matrix.ConvertInputs(inputs));
-            Matrix targetedOutputsMatrix = new Matrix(Matrix.ConvertInputs(targetedOutputs));
+            Matrix inputsMatrix = new Matrix(Matrix.ConvertInputsToRowFormat(inputs));
+            Matrix targetedOutputsMatrix = new Matrix(Matrix.ConvertInputsToRowFormat(targetedOutputs));
 
             Matrix hiddenLayerOutputs = Matrix.Sigmoid(this.WeightsBetweenInputAndHidden * inputsMatrix);
             Matrix outputLayerOutputs = Matrix.Sigmoid(this.WeightsBetweenHiddenAndOutput * hiddenLayerOutputs);
@@ -110,7 +110,7 @@ namespace OvertakeSolver
             //double[] inputs = new double[] { initialSeparation, overtakingSpeedMPS, oncomingSpeedMPS };
 
             //outputs of a layer equals the sigmoid of the weights times the input. do this for all layers
-            Matrix inputMatrix = new Matrix(Matrix.ConvertInputs(inputs));
+            Matrix inputMatrix = new Matrix(Matrix.ConvertInputsToRowFormat(inputs));
             Matrix hiddenLayerOutputs = Matrix.Sigmoid(this.WeightsBetweenInputAndHidden * inputMatrix);
             Matrix outputLayerOutputs = Matrix.Sigmoid(this.WeightsBetweenHiddenAndOutput * hiddenLayerOutputs);
 

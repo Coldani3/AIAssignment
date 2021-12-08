@@ -23,11 +23,6 @@ namespace OvertakeSolver
             this.Genes = new double[GeneCount];
         }
 
-        public void RandomiseGenes()
-        {
-
-        }
-
         public ArtificialIntelligence Copy(ArtificialIntelligence ai)
         {
             throw new NotImplementedException();

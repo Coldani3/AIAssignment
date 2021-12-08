@@ -232,22 +232,21 @@ namespace OvertakeSolver
         {
             Matrix newMatrix = new Matrix(Util.InstantiateJagged(matrix.MatrixArr.Length, matrix.MatrixArr[0].Length));
 
+            //iterate over all elements in matrix and add the sigmoid of them to the same position in newMatrix
             for (int i = 0; i < matrix.MatrixArr.Length; i++)
             {
                 for (int j = 0; j < matrix.MatrixArr[i].Length; j++)
                 {
-                    //Console.WriteLine("Before: " + newMatrix.MatrixArr[i][j]);
                     newMatrix.MatrixArr[i][j] = 1 / (1 + Math.Pow(Math.E, -matrix.MatrixArr[i][j]));
-                    //Console.WriteLine("After: " + newMatrix.MatrixArr[i][j]);
-                    //Console.ReadKey(true);
                 }
             }
 
             return newMatrix;
         }
 
-        public static double[][] ConvertInputs(double[] inputs)
+        public static double[][] ConvertInputsToRowFormat(double[] inputs)
         {
+            //take inputs and flip them so that values are on a row in a matrix
             double[][] output = new double[inputs.Length][];
 
             for (int i = 0; i < inputs.Length; i++)

@@ -26,7 +26,7 @@ namespace OvertakeSolver
 
         public abstract void BeginTraining();
 
-        public Dictionary<ArtificialIntelligence, int> ValidateSuccessRates()
+        public Dictionary<ArtificialIntelligence, int> GatherSuccessRates()
         {
             Program.DrawMenu = false;
             Dictionary<ArtificialIntelligence, int> aiSuccessfulPredictions = new Dictionary<ArtificialIntelligence, int>();
@@ -56,26 +56,23 @@ namespace OvertakeSolver
                 }
             }
 
-            return this.DisplaySuccessRates(aiSuccessfulPredictions);
-
-            //Console.ReadKey(true);
-
-            //Program.DrawMenu = true;
+            return aiSuccessfulPredictions;
         }
 
-        public virtual Dictionary<ArtificialIntelligence, int> DisplaySuccessRates(Dictionary<ArtificialIntelligence, int> aiSuccessfulPredictions)
+        public virtual Dictionary<ArtificialIntelligence, int> OrderResults(Dictionary<ArtificialIntelligence, int> results)
+        {
+            return new Dictionary<ArtificialIntelligence, int>(results.OrderByDescending((item) => item.Value));
+        }
+
+        public virtual void DisplaySuccessRates(Dictionary<ArtificialIntelligence, int> orderedPredictions, Dictionary<ArtificialIntelligence, int> unorderedPredictions)
         {
             Console.WriteLine(new String('-', 30));
 
-            Dictionary<ArtificialIntelligence, int> orderedPredictions = new Dictionary<ArtificialIntelligence, int>(aiSuccessfulPredictions.OrderByDescending((item) => item.Value));
-
             foreach (ArtificialIntelligence intelligence in orderedPredictions.Keys)
             {
-                double success = GetSuccessRate(aiSuccessfulPredictions[intelligence], this.TestData.Count);// ((double) aiSuccessfulPredictions[intelligence] / (double) this.TestData.Count) * 100.0;
-                Console.WriteLine($"Intelligence #{orderedPredictions.Keys.ToList().IndexOf(intelligence) + 1} (process order: {aiSuccessfulPredictions.Keys.ToList().IndexOf(intelligence) + 1}) Success Rate: {success.ToString("###.##")}% Successes: {aiSuccessfulPredictions[intelligence]}");
+                double success = GetSuccessRate(unorderedPredictions[intelligence], this.TestData.Count);
+                Console.WriteLine($"Intelligence #{orderedPredictions.Keys.ToList().IndexOf(intelligence) + 1} (process order: {unorderedPredictions.Keys.ToList().IndexOf(intelligence) + 1}) Success Rate: {success.ToString("###.##")}% Successes: {unorderedPredictions[intelligence]}");
             }
-
-            //Console.ReadKey(true);
 
             if (Program.CurrentBestAI == null)
             {
@@ -83,10 +80,6 @@ namespace OvertakeSolver
                 Program.CurrentBestAI = bestAI.Copy(bestAI);
                 Program.BestAISuccessRate = GetSuccessRate(orderedPredictions[bestAI], this.TestData.Count);
             }
-
-            return orderedPredictions;
-
-            //aiSuccessfulPredictions.Keys.ToList().ForEach((ai) => Console.WriteLine(ai));;
         }
 
         public virtual void BasedOnResults(Dictionary<ArtificialIntelligence, int> orderedPredictions)

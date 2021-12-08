@@ -9,6 +9,8 @@ namespace OvertakeSolver
 {
     class Program
     {
+        //3 inputs: initial separation, overtaking speed and oncoming speed
+        //1 output: if you can overtake
         public static int InputNodes = 3;
         public static int OutputNodes = 1;
         public static int HiddenNodes = 4;
@@ -21,7 +23,7 @@ namespace OvertakeSolver
         static AITrainer Trainer;
         public static MenuManager MenuManager;
         //1 for neural, 2 for genetic
-        public static int SelectedAI = 0;
+        public static int MenuOption = 0;
         public static bool DrawMenu = true;
         public static double LearningRate = 0.8;
         public static List<Overtake.OvertakeObj> SampleSet = Util.GetDataForComparing(TrainingSetSize);
@@ -31,31 +33,18 @@ namespace OvertakeSolver
 
         static void Main(string[] args)
         {
+            Console.Title = "Overtake Solver (using Dataset V3)";
             Overtake.OvertakeDataGet.SetRandomRepeatable();
-
-            //Console.WriteLine(SampleSet[0].InitialSeparationM);
-            //Console.WriteLine(Util.Normalise(SampleSet[0].InitialSeparationM, 280));
-            //Console.WriteLine(1 / (1 + Math.Pow(Math.E, -Util.Normalise(SampleSet[0].InitialSeparationM, 280))));
-            ////It seems to be always predicting True or False - there are 56 values in the sample set that are always true, that's why
-            ////it always spits out 56 and 44. Perhaps the weights gravitate around 0.5?
-            //Console.WriteLine(SampleSet.Sum(x => x.Success ? 1 : 0));
-            
-            //Can confirm both of these work
-            //IrisTest.Run();
-            //XorTest.Run();
-
-            //Console.ReadKey(true);
-
-            //Environment.Exit(0);
 
             Task menuTask = new Task(() => StartMenuThread());
             menuTask.Start();
 
             while (Running)
             {
-                while (SelectedAI == 0) ;
+                //wait until the UI selects an AI to use
+                while (MenuOption == 0) ;
 
-                switch (SelectedAI)
+                switch (MenuOption)
                 {
                     case 1:
                         SelectNeuralNetwork();
@@ -64,39 +53,49 @@ namespace OvertakeSolver
                     case 2:
                         SelectGeneticAlgorithm();
                         break;
+
+                    case 3:
+                        MenuManager.ChangeMenu(new LoadNeuralAIMenu());
+                        break;
                 }
             }
         }
 
         public static void InitiateTraining(AITrainer trainer)
         {
+            //track time taken
             long trainingStart = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
+            //start training
             trainer.BeginTraining();
 
             long trainingDone = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
             long trainingTime = trainingDone - trainingStart;
 
-            Dictionary<ArtificialIntelligence, int> results = trainer.ValidateSuccessRates();
+            Dictionary<ArtificialIntelligence, int> results = trainer.GatherSuccessRates();
+            Dictionary<ArtificialIntelligence, int> orderedResults = trainer.OrderResults(results);
+            trainer.DisplaySuccessRates(orderedResults, results);
 
+            //display time taken
             Console.WriteLine($"Training complete in {trainingTime} milliseconds ({Util.GetTimeTakenFormatted(trainingTime)})");
+            //wait for user input to go back to main menu
             Console.ReadKey(true);
 
+            //let trainer do what it needs to do after
             trainer.BasedOnResults(results);
 
-            Console.ReadKey(true);
             DrawMenu = true;
         }
 
         public static void SelectNeuralNetwork()
         {
-            //3 inputs: initial separation, overtaking speed and oncoming speed
-            //1 output: if you can overtake
+            //generate AIs
             for (int i = 0; i < AIs; i++)
             {
                 AIsList.Add(new NeuralNetwork(InputNodes, OutputNodes, HiddenNodes, LearningRate));
             }
 
+            //setup trainer
             Trainer = new NeuralNetworkTrainer(AIsList, SampleSet, ComparisonSetSize);
 
             InitiateTraining(Trainer);
@@ -104,6 +103,8 @@ namespace OvertakeSolver
 
         public static void SelectGeneticAlgorithm()
         {
+            //TODO: generate AIs
+
             Trainer = new GeneticAlgorithmTrainer(AIsList, SampleSet, ComparisonSetSize);
 
             InitiateTraining(Trainer);
@@ -118,7 +119,10 @@ namespace OvertakeSolver
                                                     }, 
                                                     () => { 
                                                         SelectGeneticAlgorithm(); 
-                                                    } 
+                                                    },
+                                                    () => {
+                                                        MenuOption = 3;
+                                                    }
                                                 });
             Renderer renderer = new Renderer();
             MenuManager = new MenuManager(renderer, menu);
