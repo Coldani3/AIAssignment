@@ -10,7 +10,7 @@ namespace OvertakeSolver
     {
         static int InputNodes = 3;
         static int OutputNodes = 1;
-        static int HiddenNodes = 5;
+        static int HiddenNodes = 6;
         static int AIs = 20;
         public static int Epochs = 20;
         static int TrainingSetSize = 100;
@@ -22,26 +22,25 @@ namespace OvertakeSolver
         //1 for neural, 2 for genetic
         public static int SelectedAI = 0;
         public static bool DrawMenu = true;
-        public static double LearningRate = 0.001;
+        public static double LearningRate = 1.6;
         public static List<Overtake.OvertakeObj> SampleSet = Util.GetDataForComparing(TrainingSetSize);
 
         static void Main(string[] args)
         {
             Overtake.OvertakeDataGet.SetRandomRepeatable();
 
-            Console.WriteLine(SampleSet[0].InitialSeparationM);
-            Console.WriteLine(Util.Normalise(SampleSet[0].InitialSeparationM, 280));
-            Console.WriteLine(1 / (1 + Math.Pow(Math.E, -Util.Normalise(SampleSet[0].InitialSeparationM, 280))));
-            //It seems to be always predicting True or False - there are 56 values in the sample set that are always true, that's why
-            //it always spits out 56 and 44. Perhaps the weights gravitate around 0.5?
-            Console.WriteLine(SampleSet.Sum(x => x.Success ? 1 : 0));
-            Console.ReadKey(true);
-
+            //Console.WriteLine(SampleSet[0].InitialSeparationM);
+            //Console.WriteLine(Util.Normalise(SampleSet[0].InitialSeparationM, 280));
+            //Console.WriteLine(1 / (1 + Math.Pow(Math.E, -Util.Normalise(SampleSet[0].InitialSeparationM, 280))));
+            ////It seems to be always predicting True or False - there are 56 values in the sample set that are always true, that's why
+            ////it always spits out 56 and 44. Perhaps the weights gravitate around 0.5?
+            //Console.WriteLine(SampleSet.Sum(x => x.Success ? 1 : 0));
+            
             //Can confirm both of these work
             //IrisTest.Run();
             //XorTest.Run();
 
-            Console.ReadKey(true);
+            //Console.ReadKey(true);
 
             //Environment.Exit(0);
 
