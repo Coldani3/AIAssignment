@@ -19,7 +19,6 @@ namespace OvertakeSolver
             Console.CursorVisible = false;
             Program.DrawMenu = false;
             //train the AIs
-            //Overtake.OvertakeObj data;
 
             Console.Clear();
             Console.WriteLine("Epoch: ");
