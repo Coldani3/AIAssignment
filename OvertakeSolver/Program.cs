@@ -61,6 +61,7 @@ namespace OvertakeSolver
 
                     case MenuOptions.Exit:
                         Running = false;
+                        Environment.Exit(0);
                         break;
                 }
             }
@@ -122,12 +123,12 @@ namespace OvertakeSolver
                                                     () => { 
                                                         SelectNeuralNetwork(); 
                                                     }, 
-                                                    () => { 
-                                                        SelectGeneticAlgorithm(); 
-                                                    },
-                                                    () => {
-                                                        MenuOption = MenuOptions.LoadNeuralNetwork;
-                                                    },
+                                                    //() => { 
+                                                    //    SelectGeneticAlgorithm(); 
+                                                    //},
+                                                    //() => {
+                                                    //    MenuOption = MenuOptions.LoadNeuralNetwork;
+                                                    //},
                                                     () => {
                                                         MenuOption = MenuOptions.Exit;
                                                     }

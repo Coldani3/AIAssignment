@@ -8,7 +8,7 @@ namespace OvertakeSolver
 {
     public class SelectAIView : ConsoleMenuLibrary.SelectItemMenu
     {
-        public SelectAIView(Action[] actions) : base(new string[] { "1. Neural Network", "2. Genetic Algorithm", "3. Load pre existing AI (Neural Network)", "4. Exit" }, actions)
+        public SelectAIView(Action[] actions) : base(new string[] { "1. Neural Network", /*"2. Genetic Algorithm", "2. Load pre existing AI (Neural Network)",*/ "2. Exit" }, actions)
         {
         }
 

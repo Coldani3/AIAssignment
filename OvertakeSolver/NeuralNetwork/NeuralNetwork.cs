@@ -39,7 +39,7 @@ namespace OvertakeSolver
             this.WeightsBetweenInputAndHidden = new Matrix(Util.InstantiateJagged((int) nodeSettingsAndLearnRate[2], (int) nodeSettingsAndLearnRate[0]));
             this.WeightsBetweenHiddenAndOutput = new Matrix(Util.InstantiateJagged((int) nodeSettingsAndLearnRate[1], (int) nodeSettingsAndLearnRate[2]));
 
-            string[] matrices = trianglesSplit[1].Split(':');
+            string[] matrices = trianglesSplit[1].Split(':').Skip(1).ToArray();
             string[] inputHiddenDoubles = matrices[0].Split(';');
             string[] hiddenOutputDoubles = matrices[1].Split(';');
 
@@ -48,20 +48,17 @@ namespace OvertakeSolver
 
             this.WeightsBetweenInputAndHidden = new Matrix(inputHiddenWeights);
             this.WeightsBetweenHiddenAndOutput = new Matrix(hiddenOutputWeights);
-
+            ;
         }
 
         public static double[][] UnpackStringArray(string[] matrix)
         {
-            string[] matrixCopy = matrix;
+            List<string> matrixCopy = matrix.ToList();
             List<double[]> result = new List<double[]>();
+            matrixCopy.RemoveAll(x => x == "" || x.Length < 1);
 
-            for (int i = 0; i < matrix.Length; i++)
+            for (int i = 0; i < matrixCopy.Count; i++)
             {
-                if (matrixCopy[i] == "")
-                {
-                    continue;
-                }
 
                 if (matrixCopy[i].StartsWith('['))
                 {
