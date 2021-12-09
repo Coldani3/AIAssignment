@@ -16,8 +16,8 @@ namespace OvertakeSolver
         public static int HiddenNodes = 4;
         public static int AIs = 10;
         public static int Epochs = 15;
-        public static int TrainingSetSize = 100;
-        public static int ComparisonSetSize = 400;
+        public static int TestingSetSize = 100;
+        public static int TrainingSetSize = 400;
         public static bool Running = true;
         static List<ArtificialIntelligence> AIsList = new List<ArtificialIntelligence>();
         static AITrainer Trainer;
@@ -26,7 +26,7 @@ namespace OvertakeSolver
         public static MenuOptions MenuOption = MenuOptions.None;
         public static bool DrawMenu = true;
         public static double LearningRate = 0.8;
-        public static List<Overtake.OvertakeObj> SampleSet = Util.GetDataForComparing(TrainingSetSize);
+        public static List<Overtake.OvertakeObj> SampleSet = Util.GetDataForComparing(TestingSetSize);
         public static ArtificialIntelligence CurrentBestAI;
         public static double BestAISuccessRate;
         public static string BestNeuralsFile = Path.Combine(Directory.GetCurrentDirectory() + "\\BestNeurals.txt");
@@ -95,6 +95,10 @@ namespace OvertakeSolver
 
         public static void SelectNeuralNetwork()
         {
+            Program.BestAISuccessRate = 0;
+            Program.CurrentBestAI = null;
+            AIsList.Clear();
+
             //generate AIs
             for (int i = 0; i < AIs; i++)
             {
@@ -102,7 +106,7 @@ namespace OvertakeSolver
             }
 
             //setup trainer
-            Trainer = new NeuralNetworkTrainer(AIsList, SampleSet, ComparisonSetSize);
+            Trainer = new NeuralNetworkTrainer(AIsList, SampleSet, TrainingSetSize);
 
             InitiateTraining(Trainer);
         }
@@ -111,7 +115,7 @@ namespace OvertakeSolver
         {
             //TODO: generate AIs
 
-            Trainer = new GeneticAlgorithmTrainer(AIsList, SampleSet, ComparisonSetSize);
+            Trainer = new GeneticAlgorithmTrainer(AIsList, SampleSet, TrainingSetSize);
 
             InitiateTraining(Trainer);
         }

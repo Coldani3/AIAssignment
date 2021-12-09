@@ -102,7 +102,7 @@ namespace OvertakeSolver
 
         public static ArtificialIntelligence GetBestIntelligence(Dictionary<ArtificialIntelligence, int> results)
         {
-            return results.Take(1).Select(x => x.Key).ToArray()[0];
+            return results.OrderByDescending(x => x.Value).Take(1).Select(x => x.Key).ToArray()[0];
         }
 
         public static double GetSuccessRate(int successes, int dataCount)

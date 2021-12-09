@@ -31,9 +31,15 @@ namespace OvertakeSolver
                 string progressBar = "";
                 Console.SetCursorPosition(7, 0);
                 //extra spaces are to avoid artifacts of previous prints
-                Console.Write(i + "      ");
+                Console.Write((i + 1) + "      ");
                 Console.SetCursorPosition(0, 2);
                 Console.Write("       ");
+                Console.SetCursorPosition(0, 5);
+                Console.WriteLine("Settings:");
+                Console.WriteLine("Epochs: " + Program.Epochs);
+                Console.WriteLine("Input nodes: " + Program.InputNodes + "   Output nodes: " + Program.OutputNodes + "   Hidden nodes: " + Program.HiddenNodes);
+                Console.WriteLine("Learning Rate: " + Program.LearningRate);
+                Console.WriteLine("Training set size: " + Program.TrainingSetSize + "   Testing set size: " + Program.TestingSetSize);
 
                 foreach (Overtake.OvertakeObj data in trainingData)
                 {
@@ -84,7 +90,11 @@ namespace OvertakeSolver
                 Console.ReadKey(true);
                 //Select 4 best AIs, temporarily changing the epochs
                 int originalEpochs = Program.Epochs;
+                double originalLearningRate = Program.LearningRate;
+                int originalTrainingSetSize = Program.TrainingSetSize;
                 Program.Epochs = 500;
+                Program.LearningRate = 0.0001;
+                Program.TrainingSetSize = (int)Math.Round(Program.TrainingSetSize * 0.2);
                 List<ArtificialIntelligence> topFour = orderedPredictions.Take(4).Select(x => x.Key).ToList();
 
                 //also adjust the learning rates as these initial 4 should be closer to perfect, so large learning rates could cause them
@@ -92,14 +102,16 @@ namespace OvertakeSolver
                 foreach (ArtificialIntelligence ai in topFour)
                 {
                     NeuralNetwork network = (NeuralNetwork)ai;
-                    network.LearnRate = 0.0001;
+                    network.LearnRate = Program.LearningRate;
                 }
 
                 //then run them through another round of training to refine them further with a data set a fourth the size.
-                Program.InitiateTraining(new NeuralNetworkTrainer(topFour, Program.SampleSet, (int) Math.Round(Program.ComparisonSetSize * 0.2)));
+                Program.InitiateTraining(new NeuralNetworkTrainer(topFour, Program.SampleSet, Program.TrainingSetSize));
 
                 //reset epochs
                 Program.Epochs = originalEpochs;
+                Program.LearningRate = originalLearningRate;
+                Program.TrainingSetSize = originalTrainingSetSize;
             }
             else
             {
@@ -111,6 +123,7 @@ namespace OvertakeSolver
                 //compare it to the best AI of the previous cycle, keep the previous if the previous was better.
                 if (success > Program.BestAISuccessRate)
                 {
+                    Console.WriteLine("Fine tuning round resulted in better AI! (Previous: " + Program.BestAISuccessRate + "% -> New best: " + success + "%)");
                     Program.CurrentBestAI = topIntelligence;
                     Program.BestAISuccessRate = success;
                 }
@@ -119,6 +132,8 @@ namespace OvertakeSolver
 
                 this.WriteResultsToFile();
                 Console.ReadKey(true);
+
+                Program.MenuManager.ChangeMenu(new QueryAIMenu(Program.CurrentBestAI));
             }
         }
 

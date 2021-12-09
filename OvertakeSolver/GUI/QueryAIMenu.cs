@@ -25,7 +25,7 @@ namespace OvertakeSolver
 
         public override void OnInput(ConsoleKeyInfo input, MenuManager manager)
         {
-            if (new char[] { '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ']', '-' }.Contains(input.KeyChar) || 
+            if (new char[] { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.', ']', '-' }.Contains(input.KeyChar) || 
                 new ConsoleKey[] { ConsoleKey.UpArrow, ConsoleKey.DownArrow, ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.Tab, ConsoleKey.Backspace, ConsoleKey.Enter }.Contains(input.Key))
             {
                 base.OnInput(input, manager);
@@ -34,7 +34,13 @@ namespace OvertakeSolver
 
         public override bool Submit()
         {
-            return base.Submit();
+            double initialSeparation = double.Parse(this.GetInputByIndex(0));
+            double overtakingSpeed = double.Parse(this.GetInputByIndex(1));
+            double oncomingSpeed = double.Parse(this.GetInputByIndex(2));
+
+            bool predicted = Util.RawOuputToNormalised(this.Intelligence.Query(new double[] { initialSeparation, overtakingSpeed, oncomingSpeed })[0]) == 0.99;
+            this.ErrorMessage = "AI predicted: " + predicted;
+            return false;
         }
     }
 }
