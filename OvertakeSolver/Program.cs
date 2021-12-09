@@ -84,8 +84,8 @@ namespace OvertakeSolver
 
             //display time taken
             Console.WriteLine($"Training complete in {trainingTime} milliseconds ({Util.GetTimeTakenFormatted(trainingTime)})");
-            //wait for user input to go back to main menu
-            Console.ReadKey(true);
+            //wait for user input to continue
+            //Console.ReadKey(true);
 
             //let trainer do what it needs to do after
             trainer.BasedOnResults(results);

@@ -80,6 +80,8 @@ namespace OvertakeSolver
         {
             if (orderedPredictions.Count > 4)
             {
+                Console.WriteLine("Selecting the top 4 AIs of the previous batch (press Enter to continue)...");
+                Console.ReadKey(true);
                 //Select 4 best AIs, temporarily changing the epochs
                 int originalEpochs = Program.Epochs;
                 Program.Epochs = 500;
