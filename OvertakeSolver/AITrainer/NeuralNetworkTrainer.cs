@@ -31,14 +31,7 @@ namespace OvertakeSolver
                 Console.SetCursorPosition(7, 0);
                 //extra spaces are to avoid artifacts of previous prints
                 Console.Write((i + 1) + "      ");
-                Console.SetCursorPosition(0, 2);
-                Console.Write("       ");
-                Console.SetCursorPosition(0, 5);
-                Console.WriteLine("Settings:");
-                Console.WriteLine("Epochs: " + Program.Epochs);
-                Console.WriteLine("Input nodes: " + Program.InputNodes + "   Output nodes: " + Program.OutputNodes + "   Hidden nodes: " + Program.HiddenNodes);
-                Console.WriteLine("Learning Rate: " + Program.LearningRate);
-                Console.WriteLine("Training set size: " + Program.TrainingSetSize + "   Testing set size: " + Program.TestingSetSize);
+                this.PrintSettings();
 
                 foreach (Overtake.OvertakeObj data in trainingData)
                 {
@@ -49,6 +42,7 @@ namespace OvertakeSolver
                     }
 
                     Console.SetCursorPosition(0, 1);
+
                     //calculate percentage
                     percentage = (double) trainingData.IndexOf(data) / (double) trainingData.Count;
 
@@ -60,16 +54,7 @@ namespace OvertakeSolver
 
                     if (trainingData.IndexOf(data) % 10 == 0)
                     {
-                        Console.Write(progressBar);
-                        Console.SetCursorPosition(0, 2);
-                        //clear percentage line
-                        Console.Write("            ");
-                        //set percentage to be right aligned to avoid the percentage sign flickering back and forth
-                        Console.SetCursorPosition(2 - percentage.ToString().Split('.')[0].Length, 2);
-                        Console.Write((percentage * 100).ToString("###.##"));
-                        Console.SetCursorPosition(6, 2);
-                        Console.Write("%       ");
-                        Console.SetCursorPosition(7, 0);
+                        DisplayPercentage(percentage, progressBar);
                     }
                 }
 
@@ -79,6 +64,32 @@ namespace OvertakeSolver
             }
 
             Console.CursorVisible = true;
+        }
+
+        public void PrintSettings()
+        {
+            Console.SetCursorPosition(0, 2);
+            Console.Write("       ");
+            Console.SetCursorPosition(0, 5);
+            Console.WriteLine("Settings:");
+            Console.WriteLine("Epochs: " + Program.Epochs);
+            Console.WriteLine("Input nodes: " + Program.InputNodes + "   Output nodes: " + Program.OutputNodes + "   Hidden nodes: " + Program.HiddenNodes);
+            Console.WriteLine("Learning Rate: " + Program.LearningRate);
+            Console.WriteLine("Training set size: " + Program.TrainingSetSize + "   Testing set size: " + Program.TestingSetSize);
+        }
+
+        public void DisplayPercentage(double percentage, string progressBar)
+        {
+            Console.Write(progressBar);
+            Console.SetCursorPosition(0, 2);
+            //clear percentage line
+            Console.Write("            ");
+            //set percentage to be right aligned to avoid the percentage sign flickering back and forth
+            Console.SetCursorPosition(2 - percentage.ToString().Split('.')[0].Length, 2);
+            Console.Write((percentage * 100).ToString("###.##"));
+            Console.SetCursorPosition(6, 2);
+            Console.Write("%       ");
+            Console.SetCursorPosition(7, 0);
         }
 
         public override void BasedOnResults(Dictionary<ArtificialIntelligence, int> orderedPredictions)
